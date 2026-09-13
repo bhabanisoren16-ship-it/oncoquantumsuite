@@ -2,11 +2,10 @@
 <html lang="en">
   <head>
     <script>
-      // Automatically adjust base path if accessed without trailing slash (/qml)
       (function() {
-        if (window.location.pathname && window.location.pathname.endsWith('/qml')) {
+        if (window.location.pathname && (window.location.pathname.endsWith('/qml') || window.location.pathname.endsWith('/qml/'))) {
           var base = document.createElement('base');
-          base.href = window.location.pathname + '/';
+          base.href = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
           document.head.appendChild(base);
         }
       })();
@@ -19,12 +18,10 @@
     <meta property="og:description" content="A hybrid quantum-classical machine learning platform for early pancreatic cancer detection using urinary biomarkers, PennyLane 4-qubit quantum simulator, classical benchmarks, and Gemini clinical decision support." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
-    <script defer src="./assets/index-CLCyivgx.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-BljPVjzh.css">
-  
     <style>
-      body {
+      html, body {
         margin: 0;
+        padding: 0;
         background-color: #070b14;
         color: #f8fafc;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -50,6 +47,30 @@
         to { transform: rotate(360deg); }
       }
     </style>
+    <script type="module" crossorigin src="./assets/index-CLCyivgx.js"></script>
+    <script nomodule defer src="./assets/index-CLCyivgx.js"></script>
+    <link rel="stylesheet" href="./assets/index-BljPVjzh.css">
+  
+    <script>
+      window.addEventListener('error', function(e) {
+        console.warn('Initialization notice:', e.message);
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.querySelector('#loading-screen')) {
+            var loader = document.getElementById('loading-screen');
+            if (loader) {
+              loader.innerHTML = '<div class="q-spinner"></div>' +
+                '<div style="font-size: 16px; font-weight: 600; color: #38bdf8; margin-top: 8px;">QuantumPancreas AI Platform</div>' +
+                '<div style="font-size: 13px; color: #94a3b8; max-width: 420px; line-height: 1.5; margin: 8px 0 16px;">Biomarker engine is initializing. If this takes longer than expected, browser cache may need to be refreshed.</div>' +
+                '<div style="display: flex; gap: 10px;">' +
+                  '<button onclick="window.location.reload(true)" style="background: #06b6d4; color: #070b14; font-weight: 700; font-size: 13px; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;">Force Refresh (Clear Cache)</button>' +
+                  '<a href="../index.html" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 8px 14px; border-radius: 8px; border: 1px solid #334155; display: inline-flex; align-items: center;">Suite Portal &rarr;</a>' +
+                '</div>';
+            }
+          }
+        }, 3000);
+      });
+    </script>
   </head>
   <body>
     <div id="root">
@@ -61,4 +82,3 @@
     </div>
   </body>
 </html>
-

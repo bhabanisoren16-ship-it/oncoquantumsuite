@@ -117,7 +117,29 @@ const server = http.createServer((req, res) => {
     filePath = path.join(filePath, 'index.html');
   }
 
+  // Zero-404 Fallback: If requesting a missing .js or .css asset, serve the latest active bundle
   if (!fs.existsSync(filePath)) {
+    const ext = path.extname(pathname).toLowerCase();
+    const assetsDir = path.join(rootDir, 'qml', 'assets');
+    if (fs.existsSync(assetsDir)) {
+      if (ext === '.js' && (pathname.includes('/assets/') || pathname.includes('index-'))) {
+        const jsFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.js'));
+        if (jsFiles.length > 0) {
+          const fallbackJs = jsFiles.find(f => f.startsWith('index-')) || jsFiles[0];
+          filePath = path.join(assetsDir, fallbackJs);
+        }
+      } else if (ext === '.css' && (pathname.includes('/assets/') || pathname.includes('index-'))) {
+        const cssFiles = fs.readdirSync(assetsDir).filter(f => f.endsWith('.css'));
+        if (cssFiles.length > 0) {
+          const fallbackCss = cssFiles.find(f => f.startsWith('index-')) || cssFiles[0];
+          filePath = path.join(assetsDir, fallbackCss);
+        }
+      }
+    }
+  }
+
+  if (!fs.existsSync(filePath)) {
+    console.warn(`[${new Date().toLocaleTimeString()}] 404 Not Found: ${pathname}`);
     res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('404 Not Found: ' + pathname);
     return;
@@ -126,6 +148,7 @@ const server = http.createServer((req, res) => {
   const ext = path.extname(filePath).toLowerCase();
   const contentType = MIME_TYPES[ext] || 'application/octet-stream';
 
+  console.log(`[${new Date().toLocaleTimeString()}] 200 OK: ${pathname} -> ${path.basename(filePath)}`);
   res.writeHead(200, { 'Content-Type': contentType });
   fs.createReadStream(filePath).pipe(res);
 });
