@@ -1,0 +1,15 @@
+# Ignore local Python files so Vercel does not treat this as a Python project
+requirements.txt
+app.py
+quantum_model.py
+train.py
+generate_data.py
+test_bridge.py
+model.pth
+scaler.joblib
+*.pdf
+publish.bat
+scripts/
+
+# Ignore raw nested dev workspace (the compiled bundle is in qml/)
+Hybrid-QML-Pancreatic-Cancer-Platform-main/

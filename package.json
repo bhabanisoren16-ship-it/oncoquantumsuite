@@ -4,7 +4,8 @@
   "description": "Unified Clinical Oncology & Quantum Intelligence Hub featuring OncoScan AI and QuantumPancreas AI",
   "private": true,
   "scripts": {
-    "build": "node scripts/build.js",
+    "build": "echo Assets pre-compiled and ready",
+    "compile": "node scripts/build.js",
     "dev:qml": "cd Hybrid-QML-Pancreatic-Cancer-Platform-main/Hybrid-QML-Pancreatic-Cancer-Platform-main && npm run dev",
     "preview": "npx serve ."
   },

@@ -1,5 +1,9 @@
-const fs = require('fs');
-const path = require('path');
+let datasetPayload = null;
+try {
+  datasetPayload = require('../data/debernardi_dataset.json');
+} catch (e) {
+  datasetPayload = { success: false, error: 'Dataset load error: ' + e.message };
+}
 
 module.exports = (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -10,15 +14,8 @@ module.exports = (req, res) => {
     return res.status(200).end();
   }
 
-  try {
-    const jsonPath = path.join(__dirname, 'dataset.json');
-    if (fs.existsSync(jsonPath)) {
-      const data = fs.readFileSync(jsonPath, 'utf-8');
-      res.setHeader('Content-Type', 'application/json');
-      return res.status(200).send(data);
-    }
-    return res.status(404).json({ success: false, error: 'Dataset not found' });
-  } catch (err) {
-    return res.status(500).json({ success: false, error: err.message });
+  if (datasetPayload && datasetPayload.success) {
+    return res.status(200).json(datasetPayload);
   }
+  return res.status(500).json(datasetPayload || { success: false, error: 'Dataset unavailable' });
 };
