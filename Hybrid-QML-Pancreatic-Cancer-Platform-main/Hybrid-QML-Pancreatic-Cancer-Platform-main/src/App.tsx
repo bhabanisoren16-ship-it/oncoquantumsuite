@@ -4,6 +4,7 @@ import { DatasetPipelineTab } from "./components/DatasetPipelineTab";
 import { QuantumArchitectureTab } from "./components/QuantumArchitectureTab";
 import { BenchmarkLabTab } from "./components/BenchmarkLabTab";
 import { ClinicalInferenceTab } from "./components/ClinicalInferenceTab";
+import { QuantumBackgroundCanvas } from "./components/QuantumBackgroundCanvas";
 import { QuantumCursor } from "./components/QuantumCursor";
 import { PatientRecord, ModelBenchmark } from "./types";
 import { computeBenchmarks } from "./utils/qmlSimulator";
@@ -55,17 +56,17 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#070b14] text-slate-100 font-sans flex flex-col selection:bg-cyan-500 selection:text-slate-950 relative overflow-x-hidden">
+      {/* Background Animation Canvas */}
+      <QuantumBackgroundCanvas />
+
       {/* Interactive Quantum Biosensing Cursor */}
       <QuantumCursor />
-
-      {/* Ambient Animated Glow */}
-      <div className="ambient-bg-glow" />
 
       {/* Top Application Header */}
       <Header activeTab={activeTab} setActiveTab={setActiveTab} threshold={threshold} />
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
         {activeTab === "inference" && (
           <ClinicalInferenceTab threshold={threshold} setThreshold={setThreshold} />
         )}

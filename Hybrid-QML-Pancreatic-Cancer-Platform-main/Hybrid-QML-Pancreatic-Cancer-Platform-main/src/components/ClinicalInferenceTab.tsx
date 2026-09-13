@@ -180,7 +180,7 @@ Urgent Oncology Pathway:
   return (
     <div className="space-y-6">
       {/* Header & Clinical Sample Buttons */}
-      <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-5">
+      <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 shadow-2xl relative z-10">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
             <div className="flex items-center space-x-2 text-cyan-400 text-xs font-mono mb-1">
@@ -231,7 +231,7 @@ Urgent Oncology Pathway:
       {/* Main Grid: Inputs on Left, Quantum Predictions & AI Report on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Biomarker Laboratory Controls (5 Cols) */}
-        <div className="lg:col-span-5 bg-slate-900/70 border border-slate-800 rounded-xl p-5 space-y-5">
+        <div className="lg:col-span-5 bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-5 shadow-2xl relative z-10">
           <div className="flex items-center justify-between pb-3 border-b border-slate-800">
             <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
               <User className="h-4 w-4 text-cyan-400" />
@@ -302,7 +302,7 @@ Urgent Oncology Pathway:
           </div>
 
           {/* Urinary LYVE1 */}
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 space-y-1">
+          <div className="p-3 bg-[#060913] rounded-lg border border-slate-800/80 space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-slate-200 font-semibold">Urinary LYVE1 (Lymphatic remodeling):</span>
               <span className={`font-mono font-bold ${(patient.lyve1 || 0) > 1.5 ? "text-rose-400" : "text-emerald-400"}`}>
@@ -325,7 +325,7 @@ Urgent Oncology Pathway:
           </div>
 
           {/* Urinary REG1B */}
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 space-y-1">
+          <div className="p-3 bg-[#060913] rounded-lg border border-slate-800/80 space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-slate-200 font-semibold">Urinary REG1B (Regenerating Islet):</span>
               <span className={`font-mono font-bold ${(patient.reg1b || 0) > 90 ? "text-rose-400" : "text-emerald-400"}`}>
@@ -348,7 +348,7 @@ Urgent Oncology Pathway:
           </div>
 
           {/* Urinary TFF1 */}
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 space-y-1">
+          <div className="p-3 bg-[#060913] rounded-lg border border-slate-800/80 space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-slate-200 font-semibold">Urinary TFF1 (Trefoil Factor 1):</span>
               <span className={`font-mono font-bold ${(patient.tff1 || 0) > 140 ? "text-rose-400" : "text-emerald-400"}`}>
@@ -371,7 +371,7 @@ Urgent Oncology Pathway:
           </div>
 
           {/* Plasma CA 19-9 */}
-          <div className="p-3 bg-slate-950/60 rounded-lg border border-slate-800/80 space-y-1">
+          <div className="p-3 bg-[#060913] rounded-lg border border-slate-800/80 space-y-1">
             <div className="flex justify-between text-xs">
               <span className="text-slate-200 font-semibold">Plasma CA 19-9 (Serum Standard):</span>
               <span className={`font-mono font-bold ${(patient.plasma_ca19_9 || 0) > 37 ? "text-amber-400" : "text-emerald-400"}`}>
@@ -417,7 +417,7 @@ Urgent Oncology Pathway:
         {/* Right Column: Quantum Decision Card & Gemini Report (7 Cols) */}
         <div className="lg:col-span-7 space-y-6">
           {/* Quantum Prediction Gauge & Diagnostic Card */}
-          <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-5">
+          <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 shadow-2xl relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
               <div>
                 <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-1.5">
@@ -443,7 +443,7 @@ Urgent Oncology Pathway:
               </div>
 
               {/* Custom Bar with Threshold indicator */}
-              <div className="relative h-4 w-full bg-slate-950 rounded-full overflow-hidden border border-slate-800 p-0.5">
+              <div className="relative h-4 w-full bg-[#060913] rounded-full overflow-hidden border border-slate-800 p-0.5">
                 <div
                   className={`h-full rounded-full transition-all duration-500 ${
                     qProb >= 0.65
@@ -471,17 +471,17 @@ Urgent Oncology Pathway:
 
             {/* Tri-Model Comparison mini-grid */}
             <div className="grid grid-cols-3 gap-3 mt-5 pt-4 border-t border-slate-800 text-center font-mono text-xs">
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-cyan-800/40">
+              <div className="bg-[#060913] p-2.5 rounded-lg border border-cyan-800/40">
                 <div className="text-[10px] text-cyan-400 font-sans">Quantum VQC</div>
                 <div className="text-base font-bold text-cyan-300 mt-0.5">{(qProb * 100).toFixed(1)}%</div>
                 <div className="text-[10px] text-slate-500">⟨Z₀⟩={qSimulation.expectationValZ0}</div>
               </div>
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-purple-800/40">
+              <div className="bg-[#060913] p-2.5 rounded-lg border border-purple-800/40">
                 <div className="text-[10px] text-purple-400 font-sans">Classical SVM</div>
                 <div className="text-base font-bold text-purple-300 mt-0.5">{(svmProb * 100).toFixed(1)}%</div>
                 <div className="text-[10px] text-slate-500">RBF Kernel</div>
               </div>
-              <div className="bg-slate-950 p-2.5 rounded-lg border border-amber-800/40">
+              <div className="bg-[#060913] p-2.5 rounded-lg border border-amber-800/40">
                 <div className="text-[10px] text-amber-400 font-sans">Random Forest</div>
                 <div className="text-base font-bold text-amber-300 mt-0.5">{(rfProb * 100).toFixed(1)}%</div>
                 <div className="text-[10px] text-slate-500">Bagged Trees</div>
@@ -490,7 +490,7 @@ Urgent Oncology Pathway:
           </div>
 
           {/* Gemini AI Oncology Reasoning Box */}
-          <div className="bg-slate-900/70 border border-slate-800 rounded-xl p-5 space-y-4">
+          <div className="bg-[#0b101d] border border-slate-800 rounded-xl p-5 space-y-4 shadow-2xl relative z-10">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
@@ -553,7 +553,7 @@ Urgent Oncology Pathway:
                 </div>
               </div>
             ) : (
-              <div className="bg-slate-950/60 border border-dashed border-slate-800 rounded-xl p-6 text-center text-xs text-slate-400 space-y-2">
+              <div className="bg-[#060913] border border-dashed border-slate-800 rounded-xl p-6 text-center text-xs text-slate-400 space-y-2">
                 <FileText className="h-8 w-8 text-slate-600 mx-auto" />
                 <p className="font-medium text-slate-300">No Clinical Report Generated Yet</p>
                 <p className="max-w-md mx-auto text-slate-400">

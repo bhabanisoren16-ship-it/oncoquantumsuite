@@ -11,14 +11,63 @@
   }
 }
 
-.ambient-bg-glow {
+@keyframes auroraWave {
+  0% {
+    transform: rotate(0deg) scale(1);
+    opacity: 0.75;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.15) translate(20px, -25px);
+    opacity: 0.95;
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    opacity: 0.75;
+  }
+}
+
+.quantum-aurora-glow {
   position: fixed;
-  inset: -50px;
+  inset: -120px;
   pointer-events: none;
   z-index: 0;
   background: 
-    radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.14) 0%, transparent 45%),
-    radial-gradient(circle at 85% 25%, rgba(139, 92, 246, 0.14) 0%, transparent 45%),
-    radial-gradient(circle at 50% 80%, rgba(99, 102, 241, 0.10) 0%, transparent 55%);
-  animation: ambientBreathe 18s ease-in-out infinite alternate;
+    radial-gradient(circle at 20% 25%, rgba(6, 182, 212, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 80% 30%, rgba(139, 92, 246, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 50% 85%, rgba(99, 102, 241, 0.18) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(244, 63, 94, 0.12) 0%, transparent 40%),
+    radial-gradient(circle at 25% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 40%);
+  filter: blur(48px);
+  animation: auroraWave 24s ease-in-out infinite;
+}
+
+.quantum-circuit-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(34, 211, 238, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(34, 211, 238, 0.035) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse at center, black 45%, transparent 85%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 45%, transparent 85%);
+}
+
+/* Ensure all cards, diagnostic panels, and input boxes are 100% solid/opaque so background animation NEVER bleeds inside them */
+.bg-slate-900\/70,
+.bg-slate-900,
+.panel-card-solid {
+  background-color: #0b101d !important;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+}
+
+.bg-slate-950\/60,
+.bg-slate-950,
+.panel-inner-solid {
+  background-color: #060913 !important;
+  position: relative;
+  z-index: 10;
 }

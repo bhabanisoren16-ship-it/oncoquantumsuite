@@ -11,6 +11,75 @@ console.log('1. Compiling QuantumPancreas React + Vite App into qml/...');
 try {
   execSync('npm run build', { cwd: reactAppDir, stdio: 'inherit' });
   console.log('✓ Successfully compiled Hybrid QML platform to qml/');
+
+  // Post-process qml/index.html for universal file:// and web server compatibility
+  const qmlIndexHtmlPath = path.join(projectRoot, 'qml', 'index.html');
+  if (fs.existsSync(qmlIndexHtmlPath)) {
+    let html = fs.readFileSync(qmlIndexHtmlPath, 'utf-8');
+
+    // 1. Ensure classic defer script loading (removes module CORS blocking on file://)
+    html = html.replace(/<script\s+type=["']module["']\s+crossorigin\s+src=["'](\.\/assets\/[^"']+)["']><\/script>/i, '<script defer src="$1"></script>');
+
+    // 2. Inject dynamic base resolver if missing
+    if (!html.includes('window.location.pathname.endsWith(\'/qml\')')) {
+      const baseScript = `
+    <script>
+      // Automatically adjust base path if accessed without trailing slash (/qml)
+      (function() {
+        if (window.location.pathname && window.location.pathname.endsWith('/qml')) {
+          var base = document.createElement('base');
+          base.href = window.location.pathname + '/';
+          document.head.appendChild(base);
+        }
+      })();
+    </script>`;
+      html = html.replace('<head>', '<head>' + baseScript);
+    }
+
+    // 3. Inject dark theme styling and loading indicator if missing
+    if (!html.includes('id="loading-screen"')) {
+      const loadingStyles = `
+    <style>
+      body {
+        margin: 0;
+        background-color: #070b14;
+        color: #f8fafc;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+      #loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        gap: 16px;
+        background-color: #070b14;
+      }
+      .q-spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid rgba(34, 211, 238, 0.2);
+        border-top-color: #22d3ee;
+        border-radius: 50%;
+        animation: q-spin 0.8s linear infinite;
+      }
+      @keyframes q-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>`;
+      html = html.replace('</head>', loadingStyles + '\n  </head>');
+      html = html.replace('<div id="root"></div>', `<div id="root">
+      <div id="loading-screen">
+        <div class="q-spinner"></div>
+        <div style="font-size: 15px; font-weight: 600; color: #38bdf8; letter-spacing: 0.5px;">Initializing QuantumPancreas AI Platform...</div>
+        <div style="font-size: 12px; color: #64748b;">Loading 4-Qubit Variational Ansatz & Biomarker Engine</div>
+      </div>
+    </div>`);
+    }
+
+    fs.writeFileSync(qmlIndexHtmlPath, html);
+    console.log('✓ Post-processed qml/index.html with universal file:// & Vercel compatibility.');
+  }
 } catch (err) {
   console.error('Failed to compile React app:', err.message);
   process.exit(1);

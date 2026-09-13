@@ -14,6 +14,10 @@
       "destination": "/api/clinical-decision-support.js"
     },
     {
+      "source": "/assets/(.*)",
+      "destination": "/qml/assets/$1"
+    },
+    {
       "source": "/qml",
       "destination": "/qml/index.html"
     },
