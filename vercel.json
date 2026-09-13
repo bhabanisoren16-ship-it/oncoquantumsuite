@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "oncoquantumsuite",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "rewrites": [
+    {
+      "source": "/api/dataset",
+      "destination": "/api/dataset.js"
+    },
+    {
+      "source": "/api/clinical-decision-support",
+      "destination": "/api/clinical-decision-support.js"
+    },
+    {
+      "source": "/qml",
+      "destination": "/qml/index.html"
+    },
+    {
+      "source": "/qml/",
+      "destination": "/qml/index.html"
+    },
+    {
+      "source": "/qml/(.*)",
+      "destination": "/qml/$1"
+    }
+  ]
+}

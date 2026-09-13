@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OncoScan AI &bull; Clinical Genomic Biomarker & Cancer Detection Platform</title>
+  <meta name="description" content="Manual patient genomic entry and reference cohort matching platform for multi-cancer type detection: Breast Cancer (BRCA), Lung Cancer (LUAD), Pancreatic Cancer (PDAC), or Normal Tissue.">
+  
+  <!-- Modern Clean Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css?v=2.2">
+</head>
+<body>
+
+  <!-- Ambient Animated Background -->
+  <div class="ambient-background"></div>
+  <canvas id="quantum-bg-canvas" class="quantum-canvas"></canvas>
+
+  <div class="app-layout">
+
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-main">
+        <div class="logo-area">
+          <div class="logo-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+              <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+              <path d="M9 12H4s.55-3.03 2-4.5c1.47-1.47 4.5-2 4.5-2"></path>
+              <path d="M15 12v5s3.03-.55 4.5-2c1.47-1.47 2-4.5 2-4.5"></path>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <div class="brand-title-row">
+              <h1 class="header-title">OncoScan AI</h1>
+              <span class="version-tag">v2.4 Clinical</span>
+            </div>
+            <p class="header-subtitle">Genomic Biomarker Profiling & Multiclass Oncology Matching</p>
+          </div>
+        </div>
+
+        <div class="header-badges">
+          <div class="status-badge live-cohort" id="cohort-status-badge">
+            <span class="pulsing-dot" aria-hidden="true"></span>
+            <span>Reference Cohort Active (700 Samples)</span>
+          </div>
+
+          <div class="cancer-pills-row" aria-label="Supported Cancer Panels">
+            <span class="tag-pill tag-brca"><span class="dot dot-brca"></span> BRCA</span>
+            <span class="tag-pill tag-luad"><span class="dot dot-luad"></span> LUAD</span>
+            <span class="tag-pill tag-pdac"><span class="dot dot-pdac"></span> PDAC</span>
+            <span class="tag-pill tag-normal"><span class="dot dot-normal"></span> Normal</span>
+          </div>
+
+          <a href="index.html" class="btn-ghost-secondary" title="Return to Unified Suite Portal">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            <span>⬡ Portal Hub</span>
+          </a>
+
+          <a href="qml/" class="btn-ghost-secondary text-cyan" title="Launch Hybrid QML Pancreatic Cancer Platform">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <circle cx="19" cy="5" r="2"></circle>
+              <circle cx="5" cy="19" r="2"></circle>
+              <path d="M10.4 10.4 6.5 17.5"></path>
+              <path d="m13.6 13.6 3.9-7.1"></path>
+            </svg>
+            <span>⇄ Hybrid QML</span>
+          </a>
+
+          <button id="toggle-sidebar-btn" class="btn-ghost-secondary" type="button" title="View Reference Cohort Files">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <span>Cohort Datasets</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Grid -->
+    <main class="dashboard-grid">
+      
+      <!-- ==========================================
+           LEFT PANEL: MANUAL PATIENT DATA ENTRY
+           ========================================== -->
+      <section class="panel panel-input" aria-labelledby="patient-input-heading">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <div class="panel-header-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="4" y1="21" x2="4" y2="14"></line>
+                <line x1="4" y1="10" x2="4" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12" y2="3"></line>
+                <line x1="20" y1="21" x2="20" y2="16"></line>
+                <line x1="20" y1="12" x2="20" y2="3"></line>
+                <line x1="1" y1="14" x2="7" y2="14"></line>
+                <line x1="9" y1="8" x2="15" y2="8"></line>
+                <line x1="17" y1="16" x2="23" y2="16"></line>
+              </svg>
+            </div>
+            <h2 id="patient-input-heading" class="panel-title">Patient Genomic Parameters</h2>
+          </div>
+          <span class="badge-subtle">Manual Profiler</span>
+        </div>
+
+        <p class="panel-intro">
+          Input patient gene expression values (log2 TPM), adjust driver sliders, or paste cohort lines to evaluate against the reference database.
+        </p>
+
+        <!-- Patient ID & Quick-Fill Row -->
+        <div class="patient-id-bar">
+          <div class="input-inline-group">
+            <label for="patient-id-input" class="label-xs">Subject / Patient ID</label>
+            <input type="text" id="patient-id-input" class="text-input-sm" value="PATIENT-CLINICAL-001" placeholder="Enter Patient ID" spellcheck="false">
+          </div>
+          <button id="reset-baseline-btn" class="btn-sm btn-outline" type="button" title="Reset all genes to normal baseline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            <span>Reset Baseline</span>
+          </button>
+        </div>
+
+        <!-- Quick Load Profiles -->
+        <div class="quick-fill-section">
+          <span class="quick-fill-label">Clinical Presets:</span>
+          <div class="quick-fill-buttons">
+            <button type="button" class="btn-preset preset-brca" data-preset="brca">
+              <span class="dot dot-brca"></span>
+              <span>Breast (BRCA)</span>
+            </button>
+            <button type="button" class="btn-preset preset-luad" data-preset="luad">
+              <span class="dot dot-luad"></span>
+              <span>Lung (LUAD)</span>
+            </button>
+            <button type="button" class="btn-preset preset-pdac" data-preset="pdac">
+              <span class="dot dot-pdac"></span>
+              <span>Pancreatic (PDAC)</span>
+            </button>
+            <button type="button" class="btn-preset preset-normal" data-preset="normal">
+              <span class="dot dot-normal"></span>
+              <span>Healthy Control</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Input Mode Tabs -->
+        <div class="tabs-nav" role="tablist">
+          <button class="tab-btn active" data-tab="sliders" role="tab" aria-selected="true" id="tab-btn-sliders">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="21" x2="4" y2="14"></line>
+              <line x1="4" y1="10" x2="4" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12" y2="3"></line>
+              <line x1="20" y1="21" x2="20" y2="16"></line>
+              <line x1="20" y1="12" x2="20" y2="3"></line>
+            </svg>
+            <span>Biomarker Sliders</span>
+          </button>
+          <button class="tab-btn" data-tab="text" role="tab" aria-selected="false" id="tab-btn-text">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+            <span>Paste CSV / Text</span>
+          </button>
+          <button class="tab-btn" data-tab="sequence" role="tab" aria-selected="false" id="tab-btn-sequence">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 15c6.667-6 13.333 0 20-6"></path>
+              <path d="M9 22c1.798-1.998 2.518-3.995 2.807-5.993"></path>
+              <path d="M15 2c-1.798 1.998-2.518 3.995-2.807 5.993"></path>
+              <path d="m17 6-2.5-2.5"></path>
+              <path d="m14 8-1-1"></path>
+              <path d="m7 18 2.5 2.5"></path>
+              <path d="m3.5 14.5.5.5"></path>
+              <path d="m20 9 .5.5"></path>
+            </svg>
+            <span>KRAS DNA Sequence</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: INTERACTIVE GENE SLIDERS & NUMBERS -->
+        <div class="tab-pane active" id="pane-sliders" role="tabpanel">
+          
+          <!-- Group 1: Breast Cancer Drivers -->
+          <div class="gene-group-box">
+            <div class="group-title-row">
+              <div class="group-title-left">
+                <span class="group-indicator-dot dot-brca"></span>
+                <h3 class="group-title">Breast Cancer Drivers</h3>
+                <span class="group-code">BRCA Panel</span>
+              </div>
+              <span class="group-badge">log2 TPM</span>
+            </div>
+            <div class="sliders-grid" id="group-brca-sliders">
+              <!-- Rendered by JS: BRCA1, BRCA2, ERBB2, ESR1 -->
+            </div>
+          </div>
+
+          <!-- Group 2: Lung Cancer Drivers -->
+          <div class="gene-group-box">
+            <div class="group-title-row">
+              <div class="group-title-left">
+                <span class="group-indicator-dot dot-luad"></span>
+                <h3 class="group-title">Lung Cancer Drivers</h3>
+                <span class="group-code">LUAD Panel</span>
+              </div>
+              <span class="group-badge">log2 TPM</span>
+            </div>
+            <div class="sliders-grid" id="group-luad-sliders">
+              <!-- Rendered by JS: EGFR, KRAS, ALK, MET -->
+            </div>
+          </div>
+
+          <!-- Group 3: Pancreatic Cancer Drivers -->
+          <div class="gene-group-box">
+            <div class="group-title-row">
+              <div class="group-title-left">
+                <span class="group-indicator-dot dot-pdac"></span>
+                <h3 class="group-title">Pancreatic Drivers & Hubs</h3>
+                <span class="group-code">PDAC / JCLA</span>
+              </div>
+              <span class="group-badge">log2 TPM & Mutation</span>
+            </div>
+            
+            <!-- KRAS Codon Mutation Select -->
+            <div class="mutation-select-row">
+              <label for="kras-mutation-select" class="mutation-label">
+                <span class="mutation-label-text">KRAS Hotspot Codon Mutation:</span>
+                <span class="sublabel">Key alteration indicator for PDAC / LUAD neoplasms</span>
+              </label>
+              <select id="kras-mutation-select" class="custom-select-sm">
+                <option value="None">None (Wild-Type — Normal Control)</option>
+                <option value="G12D">G12D (Common in Pancreatic PDAC)</option>
+                <option value="G12V">G12V (Prevalent in Pancreatic & Lung)</option>
+                <option value="G13D">G13D (Pathogenic Pancreatic variant)</option>
+                <option value="G13V">G13V (Pathogenic variant)</option>
+                <option value="Q61L">Q61L (Activating KRAS mutation)</option>
+                <option value="Q61H">Q61H (Activating KRAS mutation)</option>
+              </select>
+            </div>
+            <div class="sliders-grid" id="group-pdac-sliders">
+              <!-- Rendered by JS: CDK1, UHRF1, SMAD4, CDKN2A -->
+            </div>
+          </div>
+
+          <!-- Group 4: Universal Cancer Regulators -->
+          <div class="gene-group-box">
+            <div class="group-title-row">
+              <div class="group-title-left">
+                <span class="group-indicator-dot dot-normal"></span>
+                <h3 class="group-title">Universal Tumor Suppressors</h3>
+                <span class="group-code">Master Regulators</span>
+              </div>
+              <span class="group-badge">log2 TPM</span>
+            </div>
+            <div class="sliders-grid" id="group-universal-sliders">
+              <!-- Rendered by JS: TP53, PTEN, MYC -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TAB 2: PASTE TEXT / CSV -->
+        <div class="tab-pane" id="pane-text" role="tabpanel">
+          <div class="paste-container">
+            <div class="paste-header-row">
+              <label for="paste-input" class="form-label">
+                Paste comma/line-separated gene values or clinical CSV records:
+              </label>
+              <div class="paste-sample-btn-group">
+                <button type="button" class="btn-xs btn-outline" id="load-sample-brca-text" title="Insert Priya Sharma (BRCA)">Priya Sharma (BRCA)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-sample-luad-text" title="Insert Rajesh Patel (LUAD)">Rajesh Patel (LUAD)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-sample-pdac-text" title="Insert Vikram Malhotra (PDAC)">Vikram Malhotra (PDAC)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-sample-norm-text" title="Insert Sunita Reddy (Normal)">Sunita Reddy (Normal)</button>
+              </div>
+            </div>
+            <p class="paste-hint">Supports standard CSV lines from <code>data/sample_brca.csv</code> or key-value pairs (e.g., <code>BRCA1: 8.9, ERBB2: 9.6, TP53: 6.4</code>).</p>
+            <textarea id="paste-input" class="code-textarea" rows="6" placeholder="Sample_ID,Cancer_Type,Label,BRCA1,BRCA2,ERBB2,ESR1,EGFR,KRAS,ALK,MET,TP53,MYC&#10;PATIENT-BRCA-SAMPLE,BRCA,1,8.64,9.91,9.40,9.12,5.92,5.34,5.54,4.04,6.30,8.98" spellcheck="false"></textarea>
+            <div class="paste-actions">
+              <button id="apply-paste-btn" class="btn-secondary" type="button">
+                Apply Parsed Gene Values
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 3: KRAS DNA SEQUENCE -->
+        <div class="tab-pane" id="pane-sequence" role="tabpanel">
+          <div class="paste-container">
+            <div class="paste-header-row">
+              <label for="sequence-input" class="form-label">
+                Paste KRAS DNA Sequence (FASTA or Raw Nucleotides):
+              </label>
+              <div class="paste-sample-btn-group">
+                <button type="button" class="btn-xs btn-outline" id="load-seq-g12d" title="S051 from pancreatic_cancer_synthetic_100_sequences.csv">S051 (G12D)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-seq-g12v" title="S055 from pancreatic_cancer_synthetic_100_sequences.csv">S055 (G12V)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-seq-q61l" title="S053 from pancreatic_cancer_synthetic_100_sequences.csv">S053 (Q61L)</button>
+                <button type="button" class="btn-xs btn-outline" id="load-seq-wt" title="S001 Normal control">S001 (WT)</button>
+              </div>
+            </div>
+            <p class="paste-hint">Automated codon screening for codons 12, 13, and 61 against validated pancreatic cohorts.</p>
+            <textarea id="sequence-input" class="code-textarea" rows="5" placeholder="ATGGTGGTGGTGGTGGTGGTGCTGGTGGTGGTGATGGTGCTGGTGGTGCTGGTGGTGGTGGTGGTGGTGCTGGTGCTGGTGGTGCTGCTGGTGCTGGTGGTGGTGCTGGTGATGGTGGTG" spellcheck="false"></textarea>
+            <div class="paste-actions">
+              <button id="analyze-sequence-btn" class="btn-secondary" type="button">
+                Analyze Codon Variants
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Run Diagnostic Action Button -->
+        <div class="action-footer">
+          <button id="run-diagnostic-btn" class="btn-primary" type="button">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span>Match With Reference Cohorts & Detect Cancer Type</span>
+          </button>
+        </div>
+
+      </section>
+
+      <!-- ==========================================
+           RIGHT PANEL: CANCER DIAGNOSIS & REFERENCE MATCHING
+           ========================================== -->
+      <section class="panel panel-results" aria-labelledby="diagnostic-results-heading">
+        <div class="panel-header">
+          <div class="panel-title-group">
+            <div class="panel-header-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+            <h2 id="diagnostic-results-heading" class="panel-title">Diagnostic Evaluation & Cohort Match</h2>
+          </div>
+          <span class="badge-subtle" id="last-analyzed-tag">Analysis Ready</span>
+        </div>
+
+        <!-- 1. DIAGNOSTIC CANCER VERDICT BANNER -->
+        <div id="diagnostic-banner" class="banner banner-neutral" role="alert">
+          <div class="banner-body">
+            <div class="banner-badge-row">
+              <span class="banner-badge" id="banner-cancer-badge">Primary Classification</span>
+              <span class="banner-icon" id="banner-icon">●</span>
+            </div>
+            <h3 class="banner-title" id="banner-title">Awaiting Genomic Analysis</h3>
+            <p class="banner-description" id="banner-description">
+              Adjust patient biomarker parameters and run evaluation to classify against reference cohort datasets.
+            </p>
+          </div>
+          <div class="banner-confidence-box">
+            <span class="conf-caption">Cohort Match</span>
+            <span class="conf-num" id="banner-confidence-num">0%</span>
+          </div>
+        </div>
+
+        <!-- 2. MULTI-CANCER PROBABILITY DISTRIBUTION BARS -->
+        <div class="result-block">
+          <div class="block-header">
+            <h4 class="block-title">Cancer Type Probability Distribution</h4>
+            <span class="block-badge">700 Reference Samples</span>
+          </div>
+          <div class="cancer-bars-list" id="cancer-bars-list">
+            <!-- Rendered by JS: BRCA, LUAD, PDAC, Normal -->
+          </div>
+        </div>
+
+        <!-- 3. TOP 5 NEAREST REFERENCE PATIENTS FROM FOLDER -->
+        <div class="result-block">
+          <div class="block-header">
+            <h4 class="block-title">Nearest Reference Patients in Cohort Space</h4>
+            <span class="block-badge" id="ref-source-badge">tcga_synthetic_cancer.csv & pancreatic_sequences.csv</span>
+          </div>
+          <p class="block-subdesc">
+            Nearest neighbor profiles computed via normalized Euclidean distance across all 15 biomarker axes:
+          </p>
+          <div class="table-responsive">
+            <table class="ref-patients-table" id="ref-patients-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Patient / Sample ID</th>
+                  <th>Reference Source</th>
+                  <th>Cancer Class</th>
+                  <th>KRAS Status</th>
+                  <th>Similarity</th>
+                </tr>
+              </thead>
+              <tbody id="ref-patients-table-body">
+                <!-- Populated dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 4. RADAR CHART & KEY DRIVER ATTRIBUTIONS -->
+        <div class="two-col-block">
+          
+          <!-- Radar Visualizer -->
+          <div class="sub-block">
+            <div class="block-header">
+              <h4 class="block-title">Expression Radar vs Cohort Mean</h4>
+            </div>
+            <div class="radar-container" id="radar-container">
+              <svg id="radar-svg" class="radar-svg" viewBox="0 0 320 280">
+                <!-- Rendered dynamically by JS -->
+              </svg>
+            </div>
+            <div class="radar-legend">
+              <span class="leg-item"><span class="leg-dot leg-patient"></span> Patient Sample</span>
+              <span class="leg-item"><span class="leg-dot leg-ref"></span> Reference Baseline</span>
+            </div>
+          </div>
+
+          <!-- Driver Gene Alteration Saliency -->
+          <div class="sub-block">
+            <div class="block-header">
+              <h4 class="block-title">Key Driving Genomic Alterations</h4>
+            </div>
+            <p class="block-subdesc">Biomarkers exhibiting highest statistical deviation from baseline:</p>
+            <div class="driver-cards-list" id="driver-cards-list">
+              <!-- Rendered by JS -->
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 5. CLINICAL ACTIONABILITY & EXPORT -->
+        <div class="action-summary-box" id="clinical-action-box">
+          <div class="action-header">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            <strong>Clinical Interpretation & Recommended Action:</strong>
+          </div>
+          <p id="clinical-action-text" class="action-text">
+            Evaluation pending. Adjust parameters and click analyze.
+          </p>
+        </div>
+
+        <div class="results-actions-row">
+          <button id="export-report-btn" class="btn-secondary" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+            </svg>
+            <span>Download Clinical Summary</span>
+          </button>
+          <button id="copy-json-btn" class="btn-outline" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+            <span>Copy Patient JSON</span>
+          </button>
+        </div>
+
+      </section>
+
+    </main>
+
+    <!-- ==========================================
+         DRAWER: REFERENCE FOLDER DATASET VIEWER
+         ========================================== -->
+    <aside class="reference-drawer" id="reference-drawer" aria-label="Reference Folder Dataset Viewer" aria-hidden="true">
+      <div class="drawer-header">
+        <div class="drawer-title-group">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <h3>Workspace Reference Cohorts</h3>
+        </div>
+        <button id="close-drawer-btn" class="drawer-close-btn" aria-label="Close Reference Drawer">&times;</button>
+      </div>
+
+      <div class="drawer-content">
+        <p class="drawer-desc">
+          Diagnostic evaluations are matched against verified reference datasets stored in this repository:
+        </p>
+
+        <!-- Reference Dataset 1 -->
+        <div class="ref-card">
+          <div class="ref-card-header">
+            <strong>1. <code>data/tcga_synthetic_cancer.csv</code></strong>
+            <span class="ref-badge">600 Profiles</span>
+          </div>
+          <p class="ref-card-body">
+            Comprehensive RNA-seq gene expression cohort modeled on TCGA across 50 key driver genes: <strong>Normal (200)</strong>, <strong>Breast Invasive Carcinoma [BRCA] (200)</strong>, and <strong>Lung Adenocarcinoma [LUAD] (200)</strong>.
+          </p>
+        </div>
+
+        <!-- Reference Dataset 2 -->
+        <div class="ref-card">
+          <div class="ref-card-header">
+            <strong>2. <code>pancreatic_cancer_synthetic_100_sequences.csv</code></strong>
+            <span class="ref-badge">100 Sequences</span>
+          </div>
+          <p class="ref-card-body">
+            Targeted genomic sequencing cohort of the KRAS oncogene in pancreatic ductal adenocarcinoma (PDAC) covering codons 12, 13, and 61 with clinical variants (G12D, G12V, G13D, G13V, Q61L, Q61H).
+          </p>
+        </div>
+
+        <!-- Reference Dataset 3 -->
+        <div class="ref-card">
+          <div class="ref-card-header">
+            <strong>3. <code>JCLA-36-e24381.pdf</code> & <code>linkedomics.org</code></strong>
+            <span class="ref-badge">Peer-Reviewed</span>
+          </div>
+          <p class="ref-card-body">
+            Peer-reviewed hub gene benchmarks in pancreatic adenocarcinoma (CDK1, UHRF1, HMMR, CEP55, ASPM, RAD51AP1, DLGAP5) and TCGA PAAD clinical staging firehose data.
+          </p>
+        </div>
+
+        <div class="drawer-stats-table">
+          <h4>Cohort Mean Biomarker Expression (log2 TPM)</h4>
+          <div class="table-responsive">
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Cohort</th>
+                  <th>BRCA1</th>
+                  <th>ERBB2</th>
+                  <th>EGFR</th>
+                  <th>KRAS</th>
+                  <th>CDK1</th>
+                  <th>TP53</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="dot dot-normal"></span> <strong>Normal</strong></td>
+                  <td>4.79</td>
+                  <td>5.61</td>
+                  <td>5.88</td>
+                  <td>5.32</td>
+                  <td>4.72</td>
+                  <td>4.38</td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-brca"></span> <strong>BRCA</strong></td>
+                  <td><span class="val-high">8.64</span></td>
+                  <td><span class="val-high">9.40</span></td>
+                  <td>5.92</td>
+                  <td>5.34</td>
+                  <td>4.62</td>
+                  <td><span class="val-high">6.30</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-luad"></span> <strong>LUAD</strong></td>
+                  <td>4.86</td>
+                  <td>5.57</td>
+                  <td><span class="val-high">9.89</span></td>
+                  <td><span class="val-high">9.25</span></td>
+                  <td>6.23</td>
+                  <td>4.42</td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-pdac"></span> <strong>PDAC</strong></td>
+                  <td>5.00</td>
+                  <td>5.40</td>
+                  <td>6.20</td>
+                  <td><span class="val-high">8.80</span></td>
+                  <td><span class="val-high">8.20</span></td>
+                  <td><span class="val-high">7.60</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="drawer-backdrop" id="drawer-backdrop"></div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <div class="footer-left">
+        <span>OncoScan AI Platform</span>
+        <span class="footer-divider">&bull;</span>
+        <span>Multiclass Genomic Distance & Cohort Evaluation</span>
+      </div>
+      <div class="footer-meta">Connected to local TCGA & PAAD clinical cohorts &bull; Zero Server Latency</div>
+    </footer>
+
+  </div>
+
+  <script src="app.js?v=2.2"></script>
+  <script src="bg-animation.js"></script>
+</body>
+</html>
