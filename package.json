@@ -6,8 +6,8 @@
   "scripts": {
     "build": "echo Assets pre-compiled and ready",
     "compile": "node scripts/build.js",
+    "dev": "node dev-server.js",
     "dev:qml": "cd Hybrid-QML-Pancreatic-Cancer-Platform-main/Hybrid-QML-Pancreatic-Cancer-Platform-main && npm run dev",
-    "start": "node dev-server.js",
     "preview": "npx serve ."
   },
   "keywords": [

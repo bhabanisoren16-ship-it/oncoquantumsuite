@@ -23,86 +23,145 @@ try {
     const cssMatch = html.match(/href=["'](\.\/assets\/index-[^"']+\.css)["']/i) ||
                      html.match(/href=["'](\.\/assets\/[^"']+\.css)["']/i);
 
-    const jsPath = jsMatch ? jsMatch[1] : './assets/index.js';
-    const cssPath = cssMatch ? cssMatch[1] : './assets/index.css';
+    const jsFile = jsMatch ? path.basename(jsMatch[1]) : 'index.js';
+    const cssFile = cssMatch ? path.basename(cssMatch[1]) : 'index.css';
 
-    // Remove crossorigin from stylesheet link (prevents CORS blocking on local/file protocols)
-    html = html.replace(/<link\s+rel=["']stylesheet["']\s+crossorigin\s+href=["']([^"']+)["']>/i, '<link rel="stylesheet" href="$1">');
+    // Construct Universal Single-File Compatible HTML
+    html = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hybrid QML Pancreatic Cancer Platform</title>
+    <meta name="description" content="A hybrid quantum-classical machine learning platform for early pancreatic cancer detection using urinary biomarkers, PennyLane 4-qubit quantum simulator, classical benchmarks, and Gemini clinical decision support." />
+    <meta property="og:title" content="Hybrid QML Pancreatic Cancer Platform" />
+    <meta property="og:description" content="A hybrid quantum-classical machine learning platform for early pancreatic cancer detection using urinary biomarkers, PennyLane 4-qubit quantum simulator, classical benchmarks, and Gemini clinical decision support." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #070b14;
+        color: #f8fafc;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+      #loading-screen {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        gap: 16px;
+        background-color: #070b14;
+      }
+      .q-spinner {
+        width: 44px;
+        height: 44px;
+        border: 3px solid rgba(34, 211, 238, 0.2);
+        border-top-color: #22d3ee;
+        border-radius: 50%;
+        animation: q-spin 0.8s linear infinite;
+      }
+      @keyframes q-spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
 
-    // Ensure dual script loading: type="module" for modern browsers, nomodule defer for fallback
-    const scriptReplacement = `<script type="module" crossorigin src="${jsPath}"></script>\n    <script nomodule defer src="${jsPath}"></script>`;
-    html = html.replace(/<script\s+type=["']module["']\s+crossorigin\s+src=["'][^"']+["']><\/script>/i, scriptReplacement);
-    html = html.replace(/<script\s+defer\s+src=["'][^"']+["']><\/script>/i, scriptReplacement);
-
-    // Inject base path resolver for server URLs without trailing slash (/qml)
-    if (!html.includes('window.location.pathname.endsWith(\'/qml\')')) {
-      const baseScript = `
+    <!-- Universal Dual-Path Resolver: Works seamlessly on file://, /qml, /qml/, and subpaths -->
     <script>
       (function() {
-        if (window.location.pathname && (window.location.pathname.endsWith('/qml') || window.location.pathname.endsWith('/qml/'))) {
-          var base = document.createElement('base');
-          base.href = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname + '/';
-          document.head.appendChild(base);
-        }
-      })();
-    </script>`;
-      html = html.replace('<head>', '<head>' + baseScript);
-    }
+        var isFile = window.location.protocol === 'file:';
+        var isRoot = !window.location.pathname.includes('/qml');
+        var assetPrefix = isFile ? './assets/' : (isRoot ? '/assets/' : '/qml/assets/');
 
-    // Inject resilience error boundary & cache clear helper
-    const recoveryScript = `
-    <script>
-      window.addEventListener('error', function(e) {
-        console.warn('Initialization notice:', e.message);
-        setTimeout(function() {
-          var root = document.getElementById('root');
-          if (root && root.querySelector('#loading-screen')) {
-            var loader = document.getElementById('loading-screen');
-            if (loader) {
-              loader.innerHTML = '<div class="q-spinner"></div>' +
-                '<div style="font-size: 16px; font-weight: 600; color: #38bdf8; margin-top: 8px;">QuantumPancreas AI Platform</div>' +
-                '<div style="font-size: 13px; color: #94a3b8; max-width: 420px; line-height: 1.5; margin: 8px 0 16px;">Biomarker engine is initializing. If this takes longer than expected, browser cache may need to be refreshed.</div>' +
-                '<div style="display: flex; gap: 10px;">' +
-                  '<button onclick="window.location.reload(true)" style="background: #06b6d4; color: #070b14; font-weight: 700; font-size: 13px; padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer;">Force Refresh (Clear Cache)</button>' +
-                  '<a href="../index.html" style="color: #94a3b8; text-decoration: none; font-size: 13px; padding: 8px 14px; border-radius: 8px; border: 1px solid #334155; display: inline-flex; align-items: center;">Suite Portal &rarr;</a>' +
-                '</div>';
-            }
+        // 1. Inject Stylesheet without CORS requirement
+        var cssLink = document.createElement('link');
+        cssLink.rel = 'stylesheet';
+        cssLink.href = assetPrefix + '${cssFile}';
+        cssLink.onerror = function() {
+          // Fallback to relative path if absolute failed
+          if (cssLink.href !== './assets/${cssFile}') {
+            var fb = document.createElement('link');
+            fb.rel = 'stylesheet';
+            fb.href = './assets/${cssFile}';
+            document.head.appendChild(fb);
           }
-        }, 3000);
-      });
-    </script>`;
-    if (!html.includes('Force Refresh (Clear Cache)')) {
-      html = html.replace('</head>', recoveryScript + '\n  </head>');
-    }
+        };
+        document.head.appendChild(cssLink);
+
+        // 2. Inject Script with classic defer (runs on file:// without CORS rejection & on all servers)
+        var appScript = document.createElement('script');
+        appScript.defer = true;
+        appScript.src = assetPrefix + '${jsFile}';
+        appScript.onerror = function() {
+          // Fallback to relative path if absolute failed
+          if (appScript.src !== './assets/${jsFile}') {
+            var fb = document.createElement('script');
+            fb.defer = true;
+            fb.src = './assets/${jsFile}';
+            document.head.appendChild(fb);
+          }
+        };
+        document.head.appendChild(appScript);
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root">
+      <div id="loading-screen">
+        <div class="q-spinner"></div>
+        <div style="font-size: 15px; font-weight: 600; color: #38bdf8; letter-spacing: 0.5px;">Initializing QuantumPancreas AI Platform...</div>
+        <div style="font-size: 12px; color: #64748b;">Loading 4-Qubit Variational Ansatz & Biomarker Engine</div>
+      </div>
+    </div>
+  </body>
+</html>`;
 
     fs.writeFileSync(qmlIndexHtmlPath, html);
-    console.log('✓ Post-processed qml/index.html with resilient dual script loaders & recovery handler.');
+    console.log('✓ Post-processed qml/index.html with bulletproof universal loader.');
 
-    // 4. Create alias copies of the compiled assets so older cached HTML hashes never 404
-    const assetsDir = path.join(projectRoot, 'qml', 'assets');
-    if (fs.existsSync(assetsDir) && jsMatch && cssMatch) {
-      const activeJsFile = path.basename(jsMatch[1]);
-      const activeCssFile = path.basename(cssMatch[1]);
-      const activeJsFullPath = path.join(assetsDir, activeJsFile);
-      const activeCssFullPath = path.join(assetsDir, activeCssFile);
+    // Also write a copy to root as qml.html for instant root-level routing
+    fs.writeFileSync(path.join(projectRoot, 'qml.html'), html);
+    console.log('✓ Synchronized root-level qml.html fallback.');
 
-      const legacyJsAliases = ['index.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js'];
-      const legacyCssAliases = ['index.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css'];
+    // 3. Create alias copies of the compiled assets in BOTH qml/assets and root assets/
+    const qmlAssetsDir = path.join(projectRoot, 'qml', 'assets');
+    const rootAssetsDir = path.join(projectRoot, 'assets');
+
+    if (!fs.existsSync(rootAssetsDir)) fs.mkdirSync(rootAssetsDir, { recursive: true });
+
+    if (fs.existsSync(qmlAssetsDir) && jsMatch && cssMatch) {
+      const activeJsFullPath = path.join(qmlAssetsDir, jsFile);
+      const activeCssFullPath = path.join(qmlAssetsDir, cssFile);
+
+      const legacyJsAliases = ['index.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', jsFile];
+      const legacyCssAliases = ['index.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', cssFile];
 
       legacyJsAliases.forEach(alias => {
-        const dest = path.join(assetsDir, alias);
-        if (dest !== activeJsFullPath) {
-          try { fs.copyFileSync(activeJsFullPath, dest); } catch (e) {}
+        // Copy into qml/assets
+        const destQml = path.join(qmlAssetsDir, alias);
+        if (destQml !== activeJsFullPath) {
+          try { fs.copyFileSync(activeJsFullPath, destQml); } catch (e) {}
         }
+        // Copy into root assets/
+        const destRoot = path.join(rootAssetsDir, alias);
+        try { fs.copyFileSync(activeJsFullPath, destRoot); } catch (e) {}
       });
 
       legacyCssAliases.forEach(alias => {
-        const dest = path.join(assetsDir, alias);
-        if (dest !== activeCssFullPath) {
-          try { fs.copyFileSync(activeCssFullPath, dest); } catch (e) {}
+        // Copy into qml/assets
+        const destQml = path.join(qmlAssetsDir, alias);
+        if (destQml !== activeCssFullPath) {
+          try { fs.copyFileSync(activeCssFullPath, destQml); } catch (e) {}
         }
+        // Copy into root assets/
+        const destRoot = path.join(rootAssetsDir, alias);
+        try { fs.copyFileSync(activeCssFullPath, destRoot); } catch (e) {}
       });
-      console.log('✓ Synchronized legacy asset cache aliases for zero-404 resilience.');
+
+      console.log('✓ Synchronized dual-directory assets (qml/assets & assets/) with zero-404 alias matrix.');
     }
   }
 } catch (err) {
@@ -127,15 +186,17 @@ if (fs.existsSync(csvPath)) {
   });
 
   const payload = { success: true, count: data.length, data };
-  const apiDir = path.join(projectRoot, 'api');
-  const qmlApiDir = path.join(projectRoot, 'qml', 'api');
+  const dataDir = path.join(projectRoot, 'data');
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+  fs.writeFileSync(path.join(dataDir, 'debernardi_dataset.json'), JSON.stringify(payload, null, 2));
 
-  if (!fs.existsSync(apiDir)) fs.mkdirSync(apiDir, { recursive: true });
-  if (!fs.existsSync(qmlApiDir)) fs.mkdirSync(qmlApiDir, { recursive: true });
+  // Ensure api directory has NO non-js files that break Vercel serverless functions
+  const rogueJson = path.join(projectRoot, 'api', 'dataset.json');
+  if (fs.existsSync(rogueJson)) fs.unlinkSync(rogueJson);
+  const rogueQmlApi = path.join(projectRoot, 'qml', 'api');
+  if (fs.existsSync(rogueQmlApi)) fs.rmSync(rogueQmlApi, { recursive: true, force: true });
 
-  fs.writeFileSync(path.join(apiDir, 'dataset.json'), JSON.stringify(payload, null, 2));
-  fs.writeFileSync(path.join(qmlApiDir, 'dataset'), JSON.stringify(payload));
-  console.log(`✓ Synchronized ${data.length} clinical benchmark records.`);
+  console.log(`✓ Synchronized ${data.length} clinical benchmark records into data/debernardi_dataset.json.`);
 }
 
 console.log('=== Build Complete: OncoQuantum AI Suite is production-ready! ===');
