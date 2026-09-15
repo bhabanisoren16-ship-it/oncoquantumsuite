@@ -12,7 +12,7 @@ Recent clinical discoveries (notably the landmark **Debernardi et al., PLoS Medi
 - **REG1B** (Regenerating Islet-Derived 1 Beta): Secreted glycoprotein elevated during acinar-to-ductal metaplasia.
 - **TFF1** (Trefoil Factor 1): Stable mucin-associated peptide up-regulated in early pancreatic intraepithelial neoplasias (PanINs).
 - **Creatinine**: Used to normalize urinary dilution variation across hydration states.
-- **Plasma CA 19-9**: Current gold standard serum biomarker, but misses 10–15% of patients who are **Lewis-antigen negative** ($Le^{a-b-}$), failing to synthesize the sialyl Lewis-A epitope!
+- **Plasma CA 19-9**: Current gold standard serum biomarker, but misses 10–15% of patients who are **Lewis-antigen negative** (Leᵃ⁻ᵇ⁻), failing to synthesize the sialyl Lewis-A epitope!
 
 ### Why Quantum Machine Learning (QML)?
 Classical models (Linear Discriminant Analysis, standard RBF-SVM) often struggle with multi-body, non-linear biomarker correlations when sample sizes in clinical cohorts are noisy or limited. 

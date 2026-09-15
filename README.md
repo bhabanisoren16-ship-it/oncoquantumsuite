@@ -49,7 +49,7 @@ The suite unites two complementary clinical oncology applications into a single 
 ### 2. QuantumPancreas AI (`/qml/`)
 * **Clinical Target:** Ultra-early detection of Pancreatic Ductal Adenocarcinoma (PDAC) using completely non-invasive urinary biosensing.
 * **Biomarker Panel:** Urinary LYVE1 (lymphangiogenesis), REG1B (ductal metaplasia), TFF1 (trefoil factor 1), Creatinine normalization, and plasma CA 19-9.
-* **Lewis-Negative ($Le^{a-b-}$) Rescue:** Rescues the 10–15% of patients lacking the FUT3 gene who cannot synthesize CA 19-9, preventing false-negative diagnoses.
+* **Lewis-Negative (Leᵃ⁻ᵇ⁻) Rescue:** Rescues the 10–15% of patients lacking the FUT3 gene who cannot synthesize CA 19-9, preventing false-negative diagnoses.
 * **Quantum Computing Ansatz:** 4-qubit Hilbert state space ($\mathbb{C}^{16}$) simulation using PennyLane parameterized rotation gates ($R_y, R_z$) and circular CNOT entanglement to capture complex multi-biomarker joint eigenstates.
 * **Explainable AI:** Automated clinical report generation powered by Gemini reasoning with resilient oncology synthesis fallback.
 
