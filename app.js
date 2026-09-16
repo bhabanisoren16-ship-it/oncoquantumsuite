@@ -11,27 +11,27 @@
 // ==========================================
 const GENE_CONFIGS = {
   brca: [
-    { id: "BRCA1", name: "BRCA1", normalMean: 4.79, normalSD: 0.5, desc: "DNA repair & breast oncogenesis" },
-    { id: "BRCA2", name: "BRCA2", normalMean: 6.13, normalSD: 0.5, desc: "Homologous recombination" },
-    { id: "ERBB2", name: "ERBB2 (HER2)", normalMean: 5.61, normalSD: 0.5, desc: "Receptor tyrosine kinase / HER2" },
-    { id: "ESR1",  name: "ESR1",  normalMean: 5.28, normalSD: 0.5, desc: "Estrogen receptor alpha" }
+    { id: "BRCA1", name: "BRCA1", normalMean: 4.79, tumorMean: 8.64, weight: 1.2, normalSD: 0.5, desc: "DNA repair & breast oncogenesis" },
+    { id: "BRCA2", name: "BRCA2", normalMean: 6.13, tumorMean: 9.91, weight: 1.0, normalSD: 0.5, desc: "Homologous recombination" },
+    { id: "ERBB2", name: "ERBB2 (HER2)", normalMean: 5.61, tumorMean: 9.40, weight: 1.4, normalSD: 0.5, desc: "Receptor tyrosine kinase / HER2" },
+    { id: "ESR1",  name: "ESR1",  normalMean: 5.28, tumorMean: 9.12, weight: 1.1, normalSD: 0.5, desc: "Estrogen receptor alpha" }
   ],
   luad: [
-    { id: "EGFR", name: "EGFR", normalMean: 5.88, normalSD: 0.55, desc: "Epidermal growth factor receptor" },
-    { id: "KRAS", name: "KRAS", normalMean: 5.32, normalSD: 0.55, desc: "GTPase signal transduction" },
-    { id: "ALK",  name: "ALK",  normalMean: 5.56, normalSD: 0.55, desc: "Anaplastic lymphoma kinase" },
-    { id: "MET",  name: "MET",  normalMean: 4.03, normalSD: 0.50, desc: "Hepatocyte growth factor receptor" }
+    { id: "EGFR", name: "EGFR", normalMean: 5.88, tumorMean: 9.89, weight: 1.4, normalSD: 0.55, desc: "Epidermal growth factor receptor" },
+    { id: "KRAS", name: "KRAS", normalMean: 5.32, tumorMean: 9.25, weight: 1.2, normalSD: 0.55, desc: "GTPase signal transduction" },
+    { id: "ALK",  name: "ALK",  normalMean: 5.56, tumorMean: 9.48, weight: 1.3, normalSD: 0.55, desc: "Anaplastic lymphoma kinase" },
+    { id: "MET",  name: "MET",  normalMean: 4.03, tumorMean: 7.85, weight: 1.0, normalSD: 0.50, desc: "Hepatocyte growth factor receptor" }
   ],
   pdac: [
-    { id: "CDK1",   name: "CDK1",   normalMean: 4.72, normalSD: 0.45, desc: "Cyclin-dependent kinase (JCLA Hub 1)" },
-    { id: "UHRF1",  name: "UHRF1",  normalMean: 5.37, normalSD: 0.50, desc: "Epigenetic regulator (JCLA Hub 6)" },
-    { id: "SMAD4",  name: "SMAD4",  normalMean: 5.39, normalSD: 0.50, desc: "TGF-β tumor suppressor (loss in PDAC)" },
-    { id: "CDKN2A", name: "CDKN2A", normalMean: 4.13, normalSD: 0.45, desc: "p16INK4a cell cycle inhibitor" }
+    { id: "CDK1",   name: "CDK1",   normalMean: 4.72, tumorMean: 8.20, weight: 1.4, normalSD: 0.45, desc: "Cyclin-dependent kinase (JCLA Hub 1)" },
+    { id: "UHRF1",  name: "UHRF1",  normalMean: 5.37, tumorMean: 7.90, weight: 1.1, normalSD: 0.50, desc: "Epigenetic regulator (JCLA Hub 6)" },
+    { id: "SMAD4",  name: "SMAD4",  normalMean: 5.39, tumorMean: 2.80, weight: 1.3, normalSD: 0.50, desc: "TGF-β tumor suppressor (loss in PDAC)", isSuppressed: true },
+    { id: "CDKN2A", name: "CDKN2A", normalMean: 4.13, tumorMean: 2.50, weight: 1.2, normalSD: 0.45, desc: "p16INK4a cell cycle inhibitor", isSuppressed: true }
   ],
   universal: [
-    { id: "TP53", name: "TP53", normalMean: 4.38, normalSD: 0.50, desc: "Guardian of the genome" },
-    { id: "PTEN", name: "PTEN", normalMean: 4.94, normalSD: 0.50, desc: "PI3K/AKT antagonist" },
-    { id: "MYC",  name: "MYC",  normalMean: 5.19, normalSD: 0.55, desc: "Cell proliferation oncoprotein" }
+    { id: "TP53", name: "TP53", normalMean: 4.38, tumorMean: 7.60, weight: 1.3, normalSD: 0.50, desc: "Guardian of the genome" },
+    { id: "PTEN", name: "PTEN", normalMean: 4.94, tumorMean: 3.63, weight: 1.1, normalSD: 0.50, desc: "PI3K/AKT antagonist", isSuppressed: true },
+    { id: "MYC",  name: "MYC",  normalMean: 5.19, tumorMean: 8.98, weight: 1.2, normalSD: 0.55, desc: "Cell proliferation oncoprotein" }
   ]
 };
 
@@ -275,34 +275,54 @@ function renderGeneSliders() {
     const rangeInput = document.getElementById(`range-${g.id}`);
     const numInput = document.getElementById(`num-${g.id}`);
 
-    const updateGeneVal = (newVal) => {
-      const clamped = Math.max(0, Math.min(15, parseFloat(newVal) || 0));
+    const updateGeneVal = (newVal, source) => {
+      // Don't snap to 0 or interrupt typing when field is being cleared or typing decimals
+      if (newVal === "" || newVal === "-" || newVal === ".") {
+        return;
+      }
+      const parsed = parseFloat(newVal);
+      if (isNaN(parsed)) return;
+
+      const clamped = Math.max(0, Math.min(15, parsed));
       patientState.genes[g.id] = clamped;
       rangeInput.value = clamped;
-      numInput.value = clamped.toFixed(1);
+
+      // Only format numInput if source was NOT manual typing in numInput
+      if (source !== "numInput") {
+        numInput.value = clamped.toFixed(1);
+      }
 
       // Update status pill
       const pill = document.getElementById(`pill-${g.id}`);
-      const isElevated = clamped > (g.normalMean + 1.8);
-      const isSuppressed = clamped < (g.normalMean - 1.5);
-      if (isElevated) {
-        pill.className = "gene-status-pill status-pill-elevated";
-        pill.textContent = "Elevated ↑";
-      } else if (isSuppressed) {
-        pill.className = "gene-status-pill status-pill-elevated";
-        pill.textContent = "Suppressed ↓";
-      } else {
-        pill.className = "gene-status-pill status-pill-normal";
-        pill.textContent = "Normal";
+      if (pill) {
+        const isElevated = clamped > (g.normalMean + 1.8);
+        const isSuppressed = clamped < (g.normalMean - 1.5);
+        if (isElevated) {
+          pill.className = "gene-status-pill status-pill-elevated";
+          pill.textContent = "Elevated ↑";
+        } else if (isSuppressed) {
+          pill.className = "gene-status-pill status-pill-elevated";
+          pill.textContent = "Suppressed ↓";
+        } else {
+          pill.className = "gene-status-pill status-pill-normal";
+          pill.textContent = "Normal";
+        }
       }
 
       // Automatically re-evaluate for seamless real-time responsiveness
       runCancerMatch();
     };
 
-    rangeInput.addEventListener("input", (e) => updateGeneVal(e.target.value));
-    numInput.addEventListener("input", (e) => updateGeneVal(e.target.value));
-    numInput.addEventListener("change", (e) => updateGeneVal(e.target.value));
+    rangeInput.addEventListener("input", (e) => updateGeneVal(e.target.value, "range"));
+    numInput.addEventListener("input", (e) => updateGeneVal(e.target.value, "numInput"));
+    numInput.addEventListener("change", (e) => {
+      const parsed = parseFloat(e.target.value);
+      const clamped = isNaN(parsed) ? g.normalMean : Math.max(0, Math.min(15, parsed));
+      patientState.genes[g.id] = clamped;
+      numInput.value = clamped.toFixed(1);
+      rangeInput.value = clamped;
+      runCancerMatch();
+    });
   });
 }
 
@@ -356,7 +376,8 @@ function setupEventListeners() {
   // Reset to Baseline
   DOM.resetBaselineBtn.addEventListener("click", () => {
     loadPreset("normal");
-    showToast("Reset all genes to normal baseline levels");
+    if (DOM.pasteInput) DOM.pasteInput.value = "";
+    showToast("Reset all genes to normal baseline levels (ready for manual entry)");
   });
 
   // Quick Preset Buttons
@@ -364,6 +385,7 @@ function setupEventListeners() {
     btn.addEventListener("click", () => {
       const p = btn.getAttribute("data-preset");
       loadPreset(p);
+      if (DOM.pasteInput) DOM.pasteInput.value = "";
       showToast(`Loaded ${btn.textContent.trim()} profile for manual adjustment`);
     });
   });
@@ -384,8 +406,22 @@ function setupEventListeners() {
     });
   });
 
+  // Live manual entry debounced synchronization for pasteInput
+  let pasteDebounceTimer = null;
+  if (DOM.pasteInput) {
+    DOM.pasteInput.addEventListener("input", () => {
+      clearTimeout(pasteDebounceTimer);
+      pasteDebounceTimer = setTimeout(() => {
+        const val = DOM.pasteInput.value.trim();
+        if (val.length >= 3) {
+          parseAndApplyTextData(true); // silent update while user is entering data manually
+        }
+      }, 250);
+    });
+  }
+
   // Parse Text / CSV Button
-  DOM.applyPasteBtn.addEventListener("click", parseAndApplyTextData);
+  DOM.applyPasteBtn.addEventListener("click", () => parseAndApplyTextData(false));
 
   // Analyze KRAS Sequence Button
   DOM.analyzeSeqBtn.addEventListener("click", analyzeKrasSequence);
@@ -961,72 +997,118 @@ function analyzeKrasSequence() {
 }
 
 // ==========================================
+// Helper: Calculate oncogenic activation of a specific biomarker panel
+function getPanelActivation(patientGenes, genesList) {
+  let scoreSum = 0;
+  let weightSum = 0;
+  let maxSingleGeneAct = 0;
+
+  genesList.forEach(g => {
+    const val = patientGenes[g.id] !== undefined ? patientGenes[g.id] : g.normalMean;
+    let ratio = 0;
+    if (g.isSuppressed) {
+      // Normal is high (~5.3), tumor is suppressed (~2.8)
+      const drop = g.normalMean - val;
+      const expectedDrop = g.normalMean - g.tumorMean;
+      ratio = Math.max(0, drop / expectedDrop);
+    } else {
+      // Normal is baseline (~4.8), tumor is amplified/elevated (~8.6)
+      const rise = val - g.normalMean;
+      const expectedRise = g.tumorMean - g.normalMean;
+      ratio = Math.max(0, rise / expectedRise);
+    }
+    ratio = Math.min(1.8, ratio);
+    if (ratio > maxSingleGeneAct) maxSingleGeneAct = ratio;
+    scoreSum += ratio * g.weight;
+    weightSum += g.weight;
+  });
+
+  const meanAct = scoreSum / weightSum;
+  // Clinical sensitivity: combine overall panel shift with peak single-driver amplification (e.g. HER2 or EGFR amplification)
+  return (meanAct * 0.65) + (maxSingleGeneAct * 0.35);
+}
+
+// ==========================================
 // 6. CANCER MATCHING & COHORT DISTANCE ENGINE
 // ==========================================
 function evaluateCancerMatch() {
   const patientGenes = patientState.genes;
   const krasMut = patientState.krasMutation || "None";
 
-  // 1. Calculate statistical distance to each reference cohort
-  const cohortScores = [];
-  const cohortKeys = ["Normal", "BRCA", "LUAD", "PDAC"];
+  // 1. Calculate panel oncogenic activations
+  const brcaAct = getPanelActivation(patientGenes, GENE_CONFIGS.brca);
+  const luadAct = getPanelActivation(patientGenes, GENE_CONFIGS.luad);
+  const pdacAct = getPanelActivation(patientGenes, GENE_CONFIGS.pdac);
+  const univAct = getPanelActivation(patientGenes, GENE_CONFIGS.universal);
 
-  cohortKeys.forEach(key => {
-    const cohort = COHORT_BENCHMARKS[key];
+  // KRAS expression in LUAD panel also feeds PDAC biology
+  const krasVal = patientGenes.KRAS !== undefined ? patientGenes.KRAS : 5.32;
+  const krasRise = Math.max(0, Math.min(1.8, (krasVal - 5.32) / (8.80 - 5.32)));
+  const combinedPdacAct = Math.max(pdacAct, (pdacAct * 0.70) + (krasRise * 0.30));
+
+  // Activating KRAS codon mutations boost the respective pulmonary and pancreatic pathways
+  let luadMutBoost = 0;
+  let pdacMutBoost = 0;
+  if (krasMut === "G12V") {
+    luadMutBoost = 0.50;
+    pdacMutBoost = 0.30;
+  } else if (krasMut === "G12D") {
+    pdacMutBoost = 0.60;
+    luadMutBoost = 0.20;
+  } else if (krasMut !== "None") {
+    pdacMutBoost = 0.40;
+    luadMutBoost = 0.25;
+  }
+
+  // Universal tumor transformation amplifies whichever organ panel has driver activity
+  const maxDriver = Math.max(brcaAct, luadAct, combinedPdacAct);
+  const univPanCancerRisk = (maxDriver < 0.12 && univAct > 0.12) ? (univAct * 1.8) : 0;
+
+  const brcaLogit = (brcaAct * 5.5) + (brcaAct > 0.08 ? univAct * 2.2 : 0) + univPanCancerRisk;
+  const luadLogit = ((luadAct + luadMutBoost) * 5.5) + (luadAct > 0.08 ? univAct * 2.2 : 0) + univPanCancerRisk;
+  const pdacLogit = ((combinedPdacAct + pdacMutBoost) * 5.5) + (combinedPdacAct > 0.08 ? univAct * 2.2 : 0) + univPanCancerRisk;
+
+  const hasMut = krasMut !== "None" ? 0.45 : 0;
+  const maxOnco = Math.max(maxDriver, univAct * 0.85) + hasMut;
+
+  // Normal logit starts at 4.6 (yielding ~95% baseline when all genes are normal),
+  // and smoothly drops towards 0 as oncogenic driver activation increases
+  const normalLogit = Math.max(-2.5, 4.6 - (maxOnco * 6.5) - (univAct * 1.5));
+
+  const rawScores = [
+    { key: "Normal", cohort: COHORT_BENCHMARKS.Normal, expScore: Math.exp(normalLogit) },
+    { key: "BRCA",   cohort: COHORT_BENCHMARKS.BRCA,   expScore: Math.exp(brcaLogit) },
+    { key: "LUAD",   cohort: COHORT_BENCHMARKS.LUAD,   expScore: Math.exp(luadLogit) },
+    { key: "PDAC",   cohort: COHORT_BENCHMARKS.PDAC,   expScore: Math.exp(pdacLogit) }
+  ];
+
+  const totalExp = rawScores.reduce((sum, item) => sum + item.expScore, 0);
+  let totalPct = 0;
+  const cohortScores = rawScores.map(item => {
+    const probability = Math.max(1, Math.round((item.expScore / totalExp) * 100));
+    totalPct += probability;
+
+    // Calculate statistical Euclidean distance for clinical reporting
     let sqDist = 0;
-    let weightSum = 0;
-
+    let wSum = 0;
     ALL_GENES.forEach(g => {
       const pVal = patientGenes[g.id] !== undefined ? patientGenes[g.id] : g.normalMean;
-      const refMean = cohort.means[g.id];
+      const refMean = item.cohort.means[g.id];
       const diff = pVal - refMean;
-      
-      // Give higher weight to disease-defining signature genes
-      let weight = 1.0;
-      if (key === "BRCA" && ["BRCA1", "BRCA2", "ERBB2", "ESR1"].includes(g.id)) weight = 3.0;
-      if (key === "LUAD" && ["EGFR", "KRAS", "ALK", "MET"].includes(g.id)) weight = 3.0;
-      if (key === "PDAC" && ["CDK1", "UHRF1", "SMAD4", "CDKN2A", "KRAS"].includes(g.id)) weight = 3.0;
-
-      sqDist += weight * (diff * diff);
-      weightSum += weight;
+      let w = 1.0;
+      if (item.key === "BRCA" && ["BRCA1", "BRCA2", "ERBB2", "ESR1"].includes(g.id)) w = 3.0;
+      if (item.key === "LUAD" && ["EGFR", "KRAS", "ALK", "MET"].includes(g.id)) w = 3.0;
+      if (item.key === "PDAC" && ["CDK1", "UHRF1", "SMAD4", "CDKN2A", "KRAS"].includes(g.id)) w = 3.0;
+      sqDist += w * diff * diff;
+      wSum += w;
     });
+    const distance = Math.sqrt(sqDist / wSum);
 
-    let normDist = Math.sqrt(sqDist / weightSum);
-
-    // Factor in KRAS mutation status
-    if (krasMut !== "None") {
-      if (krasMut === "G12D" && key === "PDAC") {
-        normDist *= 0.55; // Strongly favors Pancreatic cancer if pathogenic KRAS G12D is present
-      } else if (krasMut === "G12V" && key === "LUAD") {
-        normDist *= 0.60; // G12V common in lung adenocarcinoma
-      } else if (key === "PDAC") {
-        normDist *= 0.70; // Other activating mutations favor PDAC
-      } else if (key === "LUAD") {
-        normDist *= 0.75;
-      }
-      if (key === "Normal") {
-        normDist += 2.5;  // Cannot be normal if pathogenic mutation exists
-      } else if (key === "BRCA") {
-        normDist += 0.8;
-      }
-    } else {
-      // If no KRAS mutation, penalize PDAC slightly (PDAC is >90% KRAS mutated)
-      if (key === "PDAC") normDist += 1.2;
-    }
-
-    cohortScores.push({
-      cohort,
-      distance: normDist,
-      expScore: Math.exp(-1.4 * normDist)
-    });
-  });
-
-  // Convert distances to normalized probabilities via calibrated softmax
-  const totalExp = cohortScores.reduce((sum, item) => sum + item.expScore, 0);
-  let totalPct = 0;
-  cohortScores.forEach(item => {
-    item.probability = Math.max(1, Math.round((item.expScore / totalExp) * 100));
-    totalPct += item.probability;
+    return {
+      cohort: item.cohort,
+      distance,
+      probability
+    };
   });
 
   // Adjust highest probability so sum is exactly 100%
@@ -1047,17 +1129,23 @@ function evaluateCancerMatch() {
     let dist = 0;
     let count = 0;
     ALL_GENES.forEach(g => {
-      const p = patientGenes[g.id];
+      const p = patientGenes[g.id] !== undefined ? patientGenes[g.id] : g.normalMean;
       const r = refP.genes[g.id] || 5.0;
-      dist += (p - r) * (p - r);
-      count++;
+      let w = 1.0;
+      if (predictedCohort.id === "BRCA" && ["BRCA1", "BRCA2", "ERBB2", "ESR1"].includes(g.id)) w = 2.5;
+      if (predictedCohort.id === "LUAD" && ["EGFR", "KRAS", "ALK", "MET"].includes(g.id)) w = 2.5;
+      if (predictedCohort.id === "PDAC" && ["CDK1", "UHRF1", "SMAD4", "CDKN2A", "KRAS"].includes(g.id)) w = 2.5;
+      dist += w * (p - r) * (p - r);
+      count += w;
     });
     const rmse = Math.sqrt(dist / count);
     
     // Similarity percentage
-    let simPct = Math.max(0, Math.min(99.5, Math.round((1 - rmse / 6.5) * 100)));
+    let simPct = Math.max(0, Math.min(99.5, Math.round((1 - rmse / 6.0) * 100)));
     if (krasMut !== "None" && refP.krasMutation === krasMut) {
-      simPct = Math.min(99.8, simPct + 5);
+      simPct = Math.min(99.8, simPct + 6);
+    } else if (krasMut === "None" && refP.cancerType === predictedCohort.id) {
+      simPct = Math.min(99.5, simPct + 3);
     }
 
     return {
@@ -1072,7 +1160,7 @@ function evaluateCancerMatch() {
 
   // 3. Extract Top Driving Alterations (highest deviation from normal mean)
   const deviations = ALL_GENES.map(g => {
-    const pVal = patientGenes[g.id];
+    const pVal = patientGenes[g.id] !== undefined ? patientGenes[g.id] : g.normalMean;
     const nMean = COHORT_BENCHMARKS.Normal.means[g.id];
     const delta = pVal - nMean;
     const absDelta = Math.abs(delta);
@@ -1118,35 +1206,47 @@ function runCancerMatch() {
   DOM.bannerDesc.textContent = predictedCohort.description;
   DOM.bannerConfNum.textContent = `${confidence}%`;
 
-  // 3. Multi-Cancer Probability Bars
-  DOM.cancerBarsList.innerHTML = "";
+  // 3. Multi-Cancer Probability Bars (Smooth in-place DOM updates)
+  const existingRows = Array.from(DOM.cancerBarsList.querySelectorAll(".cancer-bar-row"));
+  const rowMap = new Map();
+  existingRows.forEach(r => {
+    const cid = r.getAttribute("data-cohort-id");
+    if (cid) rowMap.set(cid, r);
+  });
+
   cohortScores.forEach(item => {
     const c = item.cohort;
     const isWinner = c.id === predictedCohort.id;
+    let row = rowMap.get(c.id);
 
-    const row = document.createElement("div");
-    row.className = "cancer-bar-row";
-
-    row.innerHTML = `
-      <div class="cancer-bar-info">
-        <span class="cancer-bar-name">
-          <span class="bar-dot" style="background:${c.color};"></span>
-          <span class="bar-label-text">${c.name}</span>
-          ${isWinner ? '<span class="winner-chip">Primary Match</span>' : ''}
-        </span>
-        <span class="cancer-bar-pct" style="color:${c.color};">${item.probability}%</span>
-      </div>
-      <div class="cancer-bar-track">
-        <div class="cancer-bar-fill" id="bar-fill-${c.id}" style="width:0%; background:${c.color};"></div>
-      </div>
-    `;
-
-    DOM.cancerBarsList.appendChild(row);
-
-    setTimeout(() => {
-      const fill = document.getElementById(`bar-fill-${c.id}`);
-      if (fill) fill.style.width = `${item.probability}%`;
-    }, 40);
+    if (!row) {
+      row = document.createElement("div");
+      row.className = "cancer-bar-row";
+      row.setAttribute("data-cohort-id", c.id);
+      row.innerHTML = `
+        <div class="cancer-bar-info">
+          <span class="cancer-bar-name">
+            <span class="bar-dot" style="background:${c.color};"></span>
+            <span class="bar-label-text">${c.name}</span>
+            <span class="winner-chip" id="chip-${c.id}" style="${isWinner ? '' : 'display:none;'}">Primary Match</span>
+          </span>
+          <span class="cancer-bar-pct" id="pct-${c.id}" style="color:${c.color};">${item.probability}%</span>
+        </div>
+        <div class="cancer-bar-track">
+          <div class="cancer-bar-fill" id="bar-fill-${c.id}" style="width:${item.probability}%; background:${c.color};"></div>
+        </div>
+      `;
+      DOM.cancerBarsList.appendChild(row);
+    } else {
+      // Re-append in descending probability order
+      DOM.cancerBarsList.appendChild(row);
+      const pctEl = row.querySelector(`#pct-${c.id}`);
+      if (pctEl) pctEl.textContent = `${item.probability}%`;
+      const fillEl = row.querySelector(`#bar-fill-${c.id}`);
+      if (fillEl) fillEl.style.width = `${item.probability}%`;
+      const chipEl = row.querySelector(`#chip-${c.id}`);
+      if (chipEl) chipEl.style.display = isWinner ? "" : "none";
+    }
   });
 
   // 4. Top 5 Nearest Reference Patients Table
