@@ -301,6 +301,7 @@ function renderGeneSliders() {
     };
 
     rangeInput.addEventListener("input", (e) => updateGeneVal(e.target.value));
+    numInput.addEventListener("input", (e) => updateGeneVal(e.target.value));
     numInput.addEventListener("change", (e) => updateGeneVal(e.target.value));
   });
 }
@@ -339,6 +340,9 @@ function syncInputsFromState() {
 // Setup Event Listeners
 function setupEventListeners() {
   // Patient ID
+  DOM.patientIdInput.addEventListener("input", (e) => {
+    patientState.id = e.target.value.trim() || "PATIENT-UNNAMED";
+  });
   DOM.patientIdInput.addEventListener("change", (e) => {
     patientState.id = e.target.value.trim() || "PATIENT-UNNAMED";
   });
@@ -388,6 +392,17 @@ function setupEventListeners() {
 
   // Run Match Button
   DOM.runMatchBtn.addEventListener("click", () => {
+    const activeTabBtn = document.querySelector(".tab-btn.active");
+    const activeTab = activeTabBtn ? activeTabBtn.getAttribute("data-tab") : "sliders";
+
+    if (activeTab === "text" && DOM.pasteInput && DOM.pasteInput.value.trim().length > 0) {
+      parseAndApplyTextData();
+      return;
+    } else if (activeTab === "sequence" && DOM.sequenceInput && DOM.sequenceInput.value.trim().length > 0) {
+      analyzeKrasSequence();
+      return;
+    }
+
     runCancerMatch();
     showToast("Evaluation updated against reference folder");
   });
@@ -401,6 +416,8 @@ function setupEventListeners() {
   if (btnBrcaText) {
     btnBrcaText.addEventListener("click", () => {
       DOM.pasteInput.value = "Sample_ID,Cancer_Type,Label,BRCA1,BRCA2,ERBB2,ESR1,EGFR,KRAS,ALK,MET,CDK1,UHRF1,SMAD4,CDKN2A,TP53,PTEN,MYC\nPriya-Sharma-BRCA,BRCA,1,8.75,9.85,9.50,9.20,3.85,5.65,4.60,6.10,4.65,5.15,4.80,6.35,8.10,2.70,8.25";
+      patientState.krasMutation = "None";
+      DOM.krasMutationSelect.value = "None";
       parseAndApplyTextData();
       showToast("Loaded Priya Sharma (Breast Cancer BRCA)");
     });
@@ -408,6 +425,8 @@ function setupEventListeners() {
   if (btnLuadText) {
     btnLuadText.addEventListener("click", () => {
       DOM.pasteInput.value = "Sample_ID,Cancer_Type,Label,BRCA1,BRCA2,ERBB2,ESR1,EGFR,KRAS,ALK,MET,CDK1,UHRF1,SMAD4,CDKN2A,TP53,PTEN,MYC\nRajesh-Patel-LUAD,LUAD,2,5.40,4.75,4.75,6.10,9.20,9.85,9.85,9.80,6.60,6.50,4.70,4.25,5.20,5.40,5.35";
+      patientState.krasMutation = "None";
+      DOM.krasMutationSelect.value = "None";
       parseAndApplyTextData();
       showToast("Loaded Rajesh Patel (Lung Cancer LUAD)");
     });
@@ -543,7 +562,7 @@ const STANDARD_15_GENE_ORDER = [
   "CDK1", "UHRF1", "SMAD4", "CDKN2A", "TP53", "PTEN", "MYC"
 ];
 
-// Parse text / CSV pasted in Tab 2 (supports single-line CSV, multi-line CSV with headers, key-values, regex scans, and JSON)
+// Parse text / CSV pasted in Tab 2 (supports single-line CSV, multi-line CSV with headers, key-values, regex scans, raw numeric vectors, and JSON)
 function parseAndApplyTextData() {
   let rawText = DOM.pasteInput.value.trim();
   if (!rawText) {
@@ -563,7 +582,7 @@ function parseAndApplyTextData() {
     DOM.patientIdInput.value = patientState.id;
   }
 
-  // STEP 2: Extract KRAS Mutation if present (e.g. "KRAS_Mutation: G12D" or explicit mention of G12D/G12V)
+  // STEP 2: Extract KRAS Mutation if present (e.g. "KRAS_Mutation: G12D" or explicit mention of G12D/G12V/Q61L/etc.)
   const mutMatch = rawText.match(/\b(?:KRAS_Mutation|Mutation|Variant)\s*[:=\t ]+\s*([A-Za-z0-9]+)/i);
   if (mutMatch && mutMatch[1]) {
     patientState.krasMutation = mutMatch[1].trim();
@@ -574,6 +593,28 @@ function parseAndApplyTextData() {
   } else if (/\bG12V\b/i.test(rawText)) {
     patientState.krasMutation = "G12V";
     DOM.krasMutationSelect.value = "G12V";
+  } else if (/\bQ61L\b/i.test(rawText)) {
+    patientState.krasMutation = "Q61L";
+    DOM.krasMutationSelect.value = "Q61L";
+  } else if (/\bQ61H\b/i.test(rawText)) {
+    patientState.krasMutation = "Q61H";
+    DOM.krasMutationSelect.value = "Q61H";
+  } else if (/\bG13D\b/i.test(rawText)) {
+    patientState.krasMutation = "G13D";
+    DOM.krasMutationSelect.value = "G13D";
+  } else if (/\bG13V\b/i.test(rawText)) {
+    patientState.krasMutation = "G13V";
+    DOM.krasMutationSelect.value = "G13V";
+  } else {
+    // Check if Cancer_Type / Label indicates cohort or reset to None
+    const cancerMatch = rawText.match(/\b(?:Cancer_Type|Type|Cohort)\s*[:=\t, ]+\s*([A-Za-z0-9_\-]+)/i);
+    if (cancerMatch && /PDAC|PANCREA/i.test(cancerMatch[1])) {
+      patientState.krasMutation = "G12D";
+    } else {
+      // Default reset to None so previous patient state does not linger
+      patientState.krasMutation = "None";
+    }
+    DOM.krasMutationSelect.value = patientState.krasMutation;
   }
 
   // STEP 3: Check for JSON format { "BRCA1": 8.75, ... }
@@ -621,7 +662,7 @@ function parseAndApplyTextData() {
     }
   }
 
-  // STEP 5: If Regex found genes, apply immediately
+  // If Regex found genes, apply immediately
   if (count >= 3) {
     syncInputsFromState();
     runCancerMatch();
@@ -629,60 +670,198 @@ function parseAndApplyTextData() {
     return;
   }
 
-  // STEP 6: Multi-line or Single-line CSV row parsing
+  // STEP 5: Delimited CSV row parsing (multi-line with header or single-line raw row)
   const rawLines = rawText.split(/\r?\n/).map(l => l.trim()).filter(l => l.length > 0);
 
-  // 6A. Multi-line CSV with Header row
-  if (rawLines.length >= 2 && rawLines[0].includes(",") && rawLines[1].includes(",")) {
-    const headers = rawLines[0].split(",").map(h => h.replace(/["']/g, "").trim().toUpperCase());
-    const values = rawLines[1].split(",").map(v => v.replace(/["']/g, "").trim());
+  // 5A. Multi-line CSV with Header row
+  if (rawLines.length >= 2) {
+    const headerCols = rawLines[0].split(/[,;\t]+/).map(h => h.replace(/["']/g, "").trim().toUpperCase());
+    const valCols = rawLines[1].split(/[,;\t]+/).map(v => v.replace(/["']/g, "").trim());
+    const geneMatchCount = headerCols.filter(h => patientState.genes.hasOwnProperty(h)).length;
 
-    headers.forEach((h, idx) => {
-      const val = parseFloat(values[idx]);
-      if (h === "SAMPLE_ID" || h === "PATIENT_ID" || h === "ID") {
-        if (values[idx]) {
-          patientState.id = values[idx];
-          DOM.patientIdInput.value = values[idx];
+    if (geneMatchCount >= 2) {
+      headerCols.forEach((h, idx) => {
+        const val = parseFloat(valCols[idx]);
+        if (h === "SAMPLE_ID" || h === "PATIENT_ID" || h === "ID") {
+          if (valCols[idx]) {
+            patientState.id = valCols[idx];
+            DOM.patientIdInput.value = valCols[idx];
+          }
         }
-      }
-      if (patientState.genes.hasOwnProperty(h) && !isNaN(val)) {
-        patientState.genes[h] = Math.max(0, Math.min(15, val));
-        count++;
-      }
-    });
-  } 
-  // 6B. Single-line Raw CSV Row (e.g. Priya-Sharma-BRCA,BRCA,1,8.7500,9.8500...)
-  else if (rawLines.length === 1 && rawLines[0].includes(",")) {
-    const cols = rawLines[0].split(",").map(c => c.replace(/["']/g, "").trim());
+        if (h === "KRAS_MUTATION" || h === "MUTATION") {
+          if (valCols[idx]) {
+            patientState.krasMutation = valCols[idx];
+            DOM.krasMutationSelect.value = valCols[idx];
+          }
+        }
+        if (patientState.genes.hasOwnProperty(h) && !isNaN(val)) {
+          patientState.genes[h] = Math.max(0, Math.min(15, val));
+          count++;
+        }
+      });
+    }
+  }
 
-    if (isNaN(parseFloat(cols[0])) && cols.length >= 8) {
-      patientState.id = cols[0];
-      DOM.patientIdInput.value = cols[0];
+  // 5B. Single-line Raw CSV/TSV Row or raw tokens without explicit gene headers
+  if (count === 0 && rawLines.length >= 1) {
+    // Select the first data-bearing line
+    const lineToParse = (rawLines.length >= 2 && !/\d+\.\d+/.test(rawLines[0]) && /\d+\.\d+/.test(rawLines[1]))
+      ? rawLines[1]
+      : rawLines[0];
 
-      // TCGA 50-gene full row (53 or 50+ cols)
-      if (cols.length >= 50) {
-        const geneStartIndex = cols.length === 53 ? 3 : (cols.length === 52 ? 2 : (cols.length === 51 ? 1 : 0));
+    const tokens = lineToParse.split(/[,;\t]+/).map(c => c.replace(/["']/g, "").trim()).filter(c => c.length > 0);
+
+    if (tokens.length >= 10) {
+      // Case 1: 50-gene full TCGA row (50, 51, 52, 53+ columns)
+      if (tokens.length >= 50) {
+        let geneStartIndex = 0;
+        if (tokens.length >= 53) {
+          if (isNaN(parseFloat(tokens[0]))) {
+            patientState.id = tokens[0];
+          }
+          geneStartIndex = tokens.length - 50;
+        } else if (tokens.length === 52) {
+          if (isNaN(parseFloat(tokens[0]))) {
+            patientState.id = tokens[0];
+          }
+          geneStartIndex = 2;
+        } else if (tokens.length === 51) {
+          // Token 0 is label (e.g. 0, 1, 2, 3) or sample ID
+          const lbl = tokens[0];
+          if (lbl === "0") {
+            patientState.id = "PATIENT-NORMAL-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "1") {
+            patientState.id = "PATIENT-BRCA-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "2") {
+            patientState.id = "PATIENT-LUAD-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "3") {
+            patientState.id = "PATIENT-PDAC-EVAL";
+            patientState.krasMutation = "G12D";
+          } else if (isNaN(parseFloat(lbl))) {
+            patientState.id = lbl;
+          } else {
+            patientState.id = `PATIENT-${lbl}`;
+          }
+          geneStartIndex = 1;
+        } else {
+          // Exactly 50 pure gene values
+          geneStartIndex = 0;
+          patientState.id = "PATIENT-GENOMIC-50";
+        }
+
+        DOM.patientIdInput.value = patientState.id;
+        DOM.krasMutationSelect.value = patientState.krasMutation;
+
         TCGA_50_GENE_ORDER.forEach((gName, i) => {
           const valIndex = geneStartIndex + i;
-          if (valIndex < cols.length) {
-            const val = parseFloat(cols[valIndex]);
+          if (valIndex < tokens.length) {
+            const val = parseFloat(tokens[valIndex]);
             if (patientState.genes.hasOwnProperty(gName) && !isNaN(val)) {
               patientState.genes[gName] = Math.max(0, Math.min(15, val));
               count++;
             }
           }
         });
-      } else if (cols.length >= 15) {
-        // 18 columns (Sample_ID, Cancer_Type, Label + 15 genes) or 15+ raw numbers
-        const geneStartIndex = cols.length >= 18 ? 3 : (cols.length >= 16 ? 1 : 0);
+      }
+      // Case 2: 15-gene standard row (15, 16, 17, 18 columns)
+      else if (tokens.length >= 15) {
+        let geneStartIndex = 0;
+        if (tokens.length >= 18) {
+          if (isNaN(parseFloat(tokens[0]))) {
+            patientState.id = tokens[0];
+          }
+          geneStartIndex = tokens.length - 15;
+        } else if (tokens.length === 17) {
+          if (isNaN(parseFloat(tokens[0]))) {
+            patientState.id = tokens[0];
+          }
+          geneStartIndex = 2;
+        } else if (tokens.length === 16) {
+          const lbl = tokens[0];
+          if (lbl === "0") {
+            patientState.id = "PATIENT-NORMAL-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "1") {
+            patientState.id = "PATIENT-BRCA-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "2") {
+            patientState.id = "PATIENT-LUAD-EVAL";
+            patientState.krasMutation = "None";
+          } else if (lbl === "3") {
+            patientState.id = "PATIENT-PDAC-EVAL";
+            patientState.krasMutation = "G12D";
+          } else if (isNaN(parseFloat(lbl))) {
+            patientState.id = lbl;
+          } else {
+            patientState.id = `PATIENT-${lbl}`;
+          }
+          geneStartIndex = 1;
+        } else {
+          // Exactly 15 pure gene numbers
+          geneStartIndex = 0;
+          patientState.id = "PATIENT-GENOMIC-15";
+        }
+
+        DOM.patientIdInput.value = patientState.id;
+        DOM.krasMutationSelect.value = patientState.krasMutation;
+
         STANDARD_15_GENE_ORDER.forEach((gName, i) => {
           const valIndex = geneStartIndex + i;
-          if (valIndex < cols.length) {
-            const val = parseFloat(cols[valIndex]);
+          if (valIndex < tokens.length) {
+            const val = parseFloat(tokens[valIndex]);
             if (patientState.genes.hasOwnProperty(gName) && !isNaN(val)) {
               patientState.genes[gName] = Math.max(0, Math.min(15, val));
               count++;
             }
+          }
+        });
+      }
+    }
+  }
+
+  // STEP 6: Universal Numerical Stream Fallback (extracts all numbers across spaces, tabs, newlines)
+  if (count === 0) {
+    const allNumbers = rawText.match(/-?\d+(?:\.\d+)?/g);
+    if (allNumbers && allNumbers.length >= 15) {
+      if (allNumbers.length >= 50) {
+        const hasLabel = (allNumbers.length >= 51 && ["0", "1", "2", "3"].includes(allNumbers[0]));
+        const offset = hasLabel ? 1 : 0;
+        if (hasLabel) {
+          const lbl = allNumbers[0];
+          if (lbl === "0") { patientState.id = "PATIENT-NORMAL-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "1") { patientState.id = "PATIENT-BRCA-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "2") { patientState.id = "PATIENT-LUAD-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "3") { patientState.id = "PATIENT-PDAC-EVAL"; patientState.krasMutation = "G12D"; }
+          DOM.patientIdInput.value = patientState.id;
+          DOM.krasMutationSelect.value = patientState.krasMutation;
+        }
+        TCGA_50_GENE_ORDER.forEach((gName, i) => {
+          const val = parseFloat(allNumbers[offset + i]);
+          if (patientState.genes.hasOwnProperty(gName) && !isNaN(val)) {
+            patientState.genes[gName] = Math.max(0, Math.min(15, val));
+            count++;
+          }
+        });
+      } else {
+        const hasLabel = (allNumbers.length >= 16 && ["0", "1", "2", "3"].includes(allNumbers[0]));
+        const offset = hasLabel ? 1 : 0;
+        if (hasLabel) {
+          const lbl = allNumbers[0];
+          if (lbl === "0") { patientState.id = "PATIENT-NORMAL-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "1") { patientState.id = "PATIENT-BRCA-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "2") { patientState.id = "PATIENT-LUAD-EVAL"; patientState.krasMutation = "None"; }
+          else if (lbl === "3") { patientState.id = "PATIENT-PDAC-EVAL"; patientState.krasMutation = "G12D"; }
+          DOM.patientIdInput.value = patientState.id;
+          DOM.krasMutationSelect.value = patientState.krasMutation;
+        }
+        STANDARD_15_GENE_ORDER.forEach((gName, i) => {
+          const val = parseFloat(allNumbers[offset + i]);
+          if (patientState.genes.hasOwnProperty(gName) && !isNaN(val)) {
+            patientState.genes[gName] = Math.max(0, Math.min(15, val));
+            count++;
           }
         });
       }
@@ -719,7 +898,7 @@ function parseAndApplyTextData() {
     runCancerMatch();
     showToast(`Matched ${patientState.id} with ${count} genomic features!`);
   } else {
-    showToast("Could not parse gene values. Try clicking 'Priya Sharma (BRCA)' button above or format as 'BRCA1: 8.5'.", "error");
+    showToast("Could not parse gene values. Try copying from EXAMINER_DEMO_SAMPLES.md or format as 'BRCA1: 8.5'.", "error");
   }
 }
 
@@ -786,7 +965,7 @@ function analyzeKrasSequence() {
 // ==========================================
 function evaluateCancerMatch() {
   const patientGenes = patientState.genes;
-  const krasMut = patientState.krasMutation;
+  const krasMut = patientState.krasMutation || "None";
 
   // 1. Calculate statistical distance to each reference cohort
   const cohortScores = [];
@@ -798,7 +977,7 @@ function evaluateCancerMatch() {
     let weightSum = 0;
 
     ALL_GENES.forEach(g => {
-      const pVal = patientGenes[g.id];
+      const pVal = patientGenes[g.id] !== undefined ? patientGenes[g.id] : g.normalMean;
       const refMean = cohort.means[g.id];
       const diff = pVal - refMean;
       
@@ -816,32 +995,45 @@ function evaluateCancerMatch() {
 
     // Factor in KRAS mutation status
     if (krasMut !== "None") {
-      if (key === "PDAC") {
-        normDist *= 0.55; // Strongly favors Pancreatic cancer if pathogenic KRAS mutation is present
+      if (krasMut === "G12D" && key === "PDAC") {
+        normDist *= 0.55; // Strongly favors Pancreatic cancer if pathogenic KRAS G12D is present
+      } else if (krasMut === "G12V" && key === "LUAD") {
+        normDist *= 0.60; // G12V common in lung adenocarcinoma
+      } else if (key === "PDAC") {
+        normDist *= 0.70; // Other activating mutations favor PDAC
       } else if (key === "LUAD") {
-        normDist *= 0.80; // Favors LUAD
-      } else if (key === "Normal") {
+        normDist *= 0.75;
+      }
+      if (key === "Normal") {
         normDist += 2.5;  // Cannot be normal if pathogenic mutation exists
       } else if (key === "BRCA") {
-        normDist += 1.0;
+        normDist += 0.8;
       }
     } else {
-      // If no KRAS mutation, penalize PDAC slightly
+      // If no KRAS mutation, penalize PDAC slightly (PDAC is >90% KRAS mutated)
       if (key === "PDAC") normDist += 1.2;
     }
 
     cohortScores.push({
       cohort,
       distance: normDist,
-      inverseDist: 1.0 / (normDist + 0.15)
+      expScore: Math.exp(-1.4 * normDist)
     });
   });
 
-  // Convert inverse distances to normalized probabilities (Softmax)
-  const totalInv = cohortScores.reduce((sum, item) => sum + item.inverseDist, 0);
+  // Convert distances to normalized probabilities via calibrated softmax
+  const totalExp = cohortScores.reduce((sum, item) => sum + item.expScore, 0);
+  let totalPct = 0;
   cohortScores.forEach(item => {
-    item.probability = Math.round((item.inverseDist / totalInv) * 100);
+    item.probability = Math.max(1, Math.round((item.expScore / totalExp) * 100));
+    totalPct += item.probability;
   });
+
+  // Adjust highest probability so sum is exactly 100%
+  if (totalPct !== 100 && cohortScores.length > 0) {
+    const maxItem = cohortScores.reduce((prev, curr) => (curr.probability > prev.probability) ? curr : prev, cohortScores[0]);
+    maxItem.probability += (100 - totalPct);
+  }
 
   // Sort descending by probability
   cohortScores.sort((a, b) => b.probability - a.probability);
