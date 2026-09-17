@@ -1,6 +1,6 @@
 import React from "react";
 import { ModelBenchmark } from "../types";
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend } from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { Trophy, Activity, AlertCircle, CheckCircle2, TrendingUp, HelpCircle } from "lucide-react";
 
 interface BenchmarkLabTabProps {
@@ -149,18 +149,18 @@ export const BenchmarkLabTab: React.FC<BenchmarkLabTabProps> = ({ benchmarks, th
 
           <div className="h-72 w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={rocData} margin={{ top: 10, right: 10, bottom: 20, left: 10 }}>
+              <LineChart data={rocData} margin={{ top: 10, right: 15, bottom: 25, left: 15 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
                 <XAxis
                   dataKey="fpr"
                   stroke="#64748b"
                   tick={{ fontSize: 11 }}
-                  label={{ value: "False Positive Rate (1 - Specificity)", position: "bottom", offset: 5, fill: "#94a3b8", fontSize: 11 }}
+                  label={{ value: "False Positive Rate (1 - Specificity)", position: "insideBottom", offset: -12, fill: "#94a3b8", fontSize: 11 }}
                 />
                 <YAxis
                   stroke="#64748b"
                   tick={{ fontSize: 11 }}
-                  label={{ value: "True Positive Rate (Sensitivity)", angle: -90, position: "left", offset: -5, fill: "#94a3b8", fontSize: 11 }}
+                  label={{ value: "True Positive Rate (Sensitivity)", angle: -90, position: "insideLeft", offset: 12, fill: "#94a3b8", fontSize: 11 }}
                 />
                 <Tooltip
                   content={({ payload, label }) => {
@@ -177,13 +177,32 @@ export const BenchmarkLabTab: React.FC<BenchmarkLabTabProps> = ({ benchmarks, th
                     return null;
                   }}
                 />
-                <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "5px" }} />
                 <Line type="monotone" dataKey="qml" name="Quantum VQC (AUC = 0.924)" stroke="#38bdf8" strokeWidth={3} dot={false} />
                 <Line type="monotone" dataKey="svm" name="Classical SVM (AUC = 0.887)" stroke="#a855f7" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="rf" name="Random Forest (AUC = 0.871)" stroke="#f59e0b" strokeWidth={2} dot={false} />
                 <Line type="monotone" dataKey="chance" name="Chance Baseline (AUC = 0.500)" stroke="#64748b" strokeDasharray="5 5" dot={false} />
               </LineChart>
             </ResponsiveContainer>
+          </div>
+
+          {/* Dedicated Clean Legend - Zero Overlap Guaranteed */}
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-3.5 text-xs font-medium border-t border-slate-800/80 mt-2">
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-1 bg-sky-400 rounded-full inline-block"></span>
+              <span className="text-slate-200">Quantum VQC <span className="text-sky-400 font-mono text-[11px]">(AUC = 0.924)</span></span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-1 bg-purple-400 rounded-full inline-block"></span>
+              <span className="text-slate-200">Classical SVM <span className="text-purple-400 font-mono text-[11px]">(AUC = 0.887)</span></span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-1 bg-amber-400 rounded-full inline-block"></span>
+              <span className="text-slate-200">Random Forest <span className="text-amber-400 font-mono text-[11px]">(AUC = 0.871)</span></span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-3.5 h-0.5 border-b border-dashed border-slate-400 inline-block"></span>
+              <span className="text-slate-400">Chance Baseline <span className="text-slate-500 font-mono text-[11px]">(AUC = 0.500)</span></span>
+            </div>
           </div>
         </div>
 

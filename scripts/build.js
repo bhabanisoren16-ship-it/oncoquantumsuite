@@ -110,7 +110,7 @@ try {
       const activeJsFullPath = path.join(qmlAssetsDir, jsFile);
       const activeCssFullPath = path.join(qmlAssetsDir, cssFile);
 
-      const legacyJsAliases = ['index.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', jsFile];
+      const legacyJsAliases = ['index.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', 'index-wFyglsvi.js', jsFile];
       const legacyCssAliases = ['index.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', cssFile];
 
       legacyJsAliases.forEach(alias => {
