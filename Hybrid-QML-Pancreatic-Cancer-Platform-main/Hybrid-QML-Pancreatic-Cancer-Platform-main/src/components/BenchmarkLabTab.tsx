@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ModelBenchmark } from "../types";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
 import { Trophy, Activity, AlertCircle, CheckCircle2, TrendingUp, HelpCircle } from "lucide-react";
@@ -10,6 +10,10 @@ interface BenchmarkLabTabProps {
 }
 
 export const BenchmarkLabTab: React.FC<BenchmarkLabTabProps> = ({ benchmarks, threshold, setThreshold }) => {
+  const [selectedModel, setSelectedModel] = useState<string | null>(null);
+  const [hoveredModel, setHoveredModel] = useState<string | null>(null);
+  const activeModel = hoveredModel ?? selectedModel;
+
   // Synthetic ROC curve points for the models
   const rocData = [
     { fpr: 0.0, qml: 0.0, svm: 0.0, rf: 0.0, chance: 0.0 },
@@ -177,32 +181,108 @@ export const BenchmarkLabTab: React.FC<BenchmarkLabTabProps> = ({ benchmarks, th
                     return null;
                   }}
                 />
-                <Line type="monotone" dataKey="qml" name="Quantum VQC (AUC = 0.924)" stroke="#38bdf8" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="svm" name="Classical SVM (AUC = 0.887)" stroke="#a855f7" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="rf" name="Random Forest (AUC = 0.871)" stroke="#f59e0b" strokeWidth={2} dot={false} />
-                <Line type="monotone" dataKey="chance" name="Chance Baseline (AUC = 0.500)" stroke="#64748b" strokeDasharray="5 5" dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="qml"
+                  name="Quantum VQC (AUC = 0.924)"
+                  stroke={activeModel === "qml" ? "#06b6d4" : activeModel ? "rgba(56, 189, 248, 0.22)" : "#38bdf8"}
+                  strokeWidth={activeModel === "qml" ? 4.5 : activeModel ? 1.5 : 3}
+                  dot={activeModel === "qml" ? { r: 4, fill: "#22d3ee", stroke: "#fff", strokeWidth: 1.5 } : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="svm"
+                  name="Classical SVM (AUC = 0.887)"
+                  stroke={activeModel === "svm" ? "#e879f9" : activeModel ? "rgba(168, 85, 247, 0.22)" : "#a855f7"}
+                  strokeWidth={activeModel === "svm" ? 4 : activeModel ? 1.5 : 2}
+                  dot={activeModel === "svm" ? { r: 4, fill: "#e879f9", stroke: "#fff", strokeWidth: 1.5 } : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="rf"
+                  name="Random Forest (AUC = 0.871)"
+                  stroke={activeModel === "rf" ? "#fbbf24" : activeModel ? "rgba(245, 158, 11, 0.22)" : "#f59e0b"}
+                  strokeWidth={activeModel === "rf" ? 4 : activeModel ? 1.5 : 2}
+                  dot={activeModel === "rf" ? { r: 4, fill: "#fbbf24", stroke: "#fff", strokeWidth: 1.5 } : false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="chance"
+                  name="Chance Baseline (AUC = 0.500)"
+                  stroke={activeModel === "chance" ? "#cbd5e1" : activeModel ? "rgba(100, 116, 139, 0.22)" : "#64748b"}
+                  strokeDasharray="5 5"
+                  strokeWidth={activeModel === "chance" ? 2.5 : 1}
+                  dot={false}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Dedicated Clean Legend - Zero Overlap Guaranteed */}
-          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 pt-3.5 text-xs font-medium border-t border-slate-800/80 mt-2">
-            <div className="flex items-center gap-1.5">
-              <span className="w-3.5 h-1 bg-sky-400 rounded-full inline-block"></span>
-              <span className="text-slate-200">Quantum VQC <span className="text-sky-400 font-mono text-[11px]">(AUC = 0.924)</span></span>
-            </div>
-            <div className="flex items-center gap-1.5">
+          {/* Dedicated Clean Interactive Legend - Click to Select/Change Color */}
+          <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 pt-3.5 text-xs font-medium border-t border-slate-800/80 mt-2">
+            <button
+              type="button"
+              onClick={() => setSelectedModel((prev) => (prev === "qml" ? null : "qml"))}
+              onMouseEnter={() => setHoveredModel("qml")}
+              onMouseLeave={() => setHoveredModel(null)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition ${
+                activeModel === "qml"
+                  ? "bg-cyan-950 border border-cyan-400 text-cyan-200 shadow-sm shadow-cyan-950"
+                  : activeModel ? "opacity-35 hover:opacity-100" : "hover:bg-slate-800/60"
+              }`}
+              title="Click to highlight Quantum VQC"
+            >
+              <span className="w-3.5 h-1 bg-cyan-400 rounded-full inline-block"></span>
+              <span className="text-slate-200">Quantum VQC <span className="text-cyan-400 font-mono text-[11px]">(AUC = 0.924)</span></span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedModel((prev) => (prev === "svm" ? null : "svm"))}
+              onMouseEnter={() => setHoveredModel("svm")}
+              onMouseLeave={() => setHoveredModel(null)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition ${
+                activeModel === "svm"
+                  ? "bg-purple-950 border border-purple-400 text-purple-200 shadow-sm shadow-purple-950"
+                  : activeModel ? "opacity-35 hover:opacity-100" : "hover:bg-slate-800/60"
+              }`}
+              title="Click to highlight Classical SVM"
+            >
               <span className="w-3.5 h-1 bg-purple-400 rounded-full inline-block"></span>
               <span className="text-slate-200">Classical SVM <span className="text-purple-400 font-mono text-[11px]">(AUC = 0.887)</span></span>
-            </div>
-            <div className="flex items-center gap-1.5">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedModel((prev) => (prev === "rf" ? null : "rf"))}
+              onMouseEnter={() => setHoveredModel("rf")}
+              onMouseLeave={() => setHoveredModel(null)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition ${
+                activeModel === "rf"
+                  ? "bg-amber-950 border border-amber-400 text-amber-200 shadow-sm shadow-amber-950"
+                  : activeModel ? "opacity-35 hover:opacity-100" : "hover:bg-slate-800/60"
+              }`}
+              title="Click to highlight Random Forest"
+            >
               <span className="w-3.5 h-1 bg-amber-400 rounded-full inline-block"></span>
               <span className="text-slate-200">Random Forest <span className="text-amber-400 font-mono text-[11px]">(AUC = 0.871)</span></span>
-            </div>
-            <div className="flex items-center gap-1.5">
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setSelectedModel((prev) => (prev === "chance" ? null : "chance"))}
+              onMouseEnter={() => setHoveredModel("chance")}
+              onMouseLeave={() => setHoveredModel(null)}
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded transition ${
+                activeModel === "chance"
+                  ? "bg-slate-800 border border-slate-400 text-slate-100"
+                  : activeModel ? "opacity-35 hover:opacity-100" : "hover:bg-slate-800/60"
+              }`}
+              title="Click to highlight Chance Baseline"
+            >
               <span className="w-3.5 h-0.5 border-b border-dashed border-slate-400 inline-block"></span>
               <span className="text-slate-400">Chance Baseline <span className="text-slate-500 font-mono text-[11px]">(AUC = 0.500)</span></span>
-            </div>
+            </button>
           </div>
         </div>
 
