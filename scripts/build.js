@@ -43,7 +43,7 @@ try {
       html, body {
         margin: 0;
         padding: 0;
-        background-color: #070b14;
+        background-color: #02040a;
         color: #f8fafc;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }

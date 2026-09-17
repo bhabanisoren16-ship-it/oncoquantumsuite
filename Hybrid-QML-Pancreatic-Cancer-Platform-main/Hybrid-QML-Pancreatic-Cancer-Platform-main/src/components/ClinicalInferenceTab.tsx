@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PatientRecord } from "../types";
 import { projectTo4Qubits, simulatePennyLaneCircuit, predictClassicalSVM, predictRandomForest } from "../utils/qmlSimulator";
-import { Stethoscope, Sparkles, User, AlertTriangle, ShieldCheck, CheckCircle2, RefreshCw, Send, FileText, ChevronRight, Activity } from "lucide-react";
+import { Stethoscope, Sparkles, User, AlertTriangle, ShieldCheck, CheckCircle2, RefreshCw, FileText, ChevronRight, Activity } from "lucide-react";
 
 interface ClinicalInferenceTabProps {
   threshold: number;
@@ -515,7 +515,7 @@ Urgent Oncology Pathway:
                   </>
                 ) : (
                   <>
-                    <Send className="h-3.5 w-3.5" />
+                    <Sparkles className="h-3.5 w-3.5" />
                     <span>Generate Clinical Report</span>
                   </>
                 )}

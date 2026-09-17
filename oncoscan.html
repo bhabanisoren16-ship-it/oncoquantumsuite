@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=2.5">
+  <link rel="stylesheet" href="style.css?v=3.1">
 </head>
 <body>
 
@@ -350,7 +350,6 @@
             </div>
             <h2 id="diagnostic-results-heading" class="panel-title">Diagnostic Evaluation & Cohort Match</h2>
           </div>
-          <span class="badge-subtle" id="last-analyzed-tag">Analysis Ready</span>
         </div>
 
         <!-- 1. DIAGNOSTIC CANCER VERDICT BANNER -->
@@ -386,7 +385,7 @@
         <div class="result-block">
           <div class="block-header">
             <h4 class="block-title">Nearest Reference Patients in Cohort Space</h4>
-            <span class="block-badge" id="ref-source-badge">tcga_synthetic_cancer.csv & pancreatic_sequences.csv</span>
+            <span class="block-badge" id="ref-source-badge" style="display: none;">tcga_synthetic_cancer.csv & pancreatic_sequences.csv</span>
           </div>
           <p class="block-subdesc">
             Nearest neighbor profiles computed via normalized Euclidean distance across all 15 biomarker axes:
@@ -688,7 +687,7 @@
 
   </div>
 
-  <script src="app.js?v=2.7"></script>
+  <script src="app.js?v=3.1"></script>
   <script src="bg-animation.js"></script>
 </body>
 </html>

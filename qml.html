@@ -14,10 +14,9 @@
       html, body {
         margin: 0;
         padding: 0;
-        background-color: #070b14;
+        background-color: #02040a;
         color: #f8fafc;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        overflow-x: hidden;
       }
     </style>
 
@@ -46,13 +45,13 @@
         // 2. Inject Script with classic defer (runs on file:// without CORS rejection & on all servers)
         var appScript = document.createElement('script');
         appScript.defer = true;
-        appScript.src = assetPrefix + 'index-CLCyivgx.js';
+        appScript.src = assetPrefix + 'index-wFyglsvi.js';
         appScript.onerror = function() {
           // Fallback to relative path if absolute failed
-          if (appScript.src !== './assets/index-CLCyivgx.js') {
+          if (appScript.src !== './assets/index-wFyglsvi.js') {
             var fb = document.createElement('script');
             fb.defer = true;
-            fb.src = './assets/index-CLCyivgx.js';
+            fb.src = './assets/index-wFyglsvi.js';
             document.head.appendChild(fb);
           }
         };

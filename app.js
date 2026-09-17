@@ -1195,8 +1195,11 @@ function runCancerMatch() {
 
   const { predictedCohort, confidence, cohortScores, topNearestPatients, topDrivers } = result;
 
-  // 1. Header tag
-  DOM.lastAnalyzedTag.textContent = `Analyzed at ${new Date().toLocaleTimeString()}`;
+  // 1. Header tag (removed from UI)
+  if (DOM.lastAnalyzedTag) {
+    DOM.lastAnalyzedTag.remove();
+    DOM.lastAnalyzedTag = null;
+  }
 
   // 2. Diagnostic Banner
   DOM.banner.className = `banner ${predictedCohort.bannerClass}`;
