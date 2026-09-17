@@ -751,8 +751,9 @@ function initCardQuantumPancreasAnimation() {
    PART 2: SIMPLE & SLEEK CLINICAL CURSOR ENGINE
    ========================================================================== */
 function initQuantumCursor() {
-  // Only enable on non-touch pointer devices
-  if (!window.matchMedia('(pointer: fine)').matches) return;
+  // Enable on any device with fine pointer accuracy (mouse, trackpad)
+  const hasPointer = window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches;
+  if (!hasPointer) return;
   if (document.getElementById('quantum-cursor-dot')) return;
 
   const isOncoScan = window.location.pathname.includes('oncoscan');
@@ -763,8 +764,8 @@ function initQuantumCursor() {
   const style = document.createElement('style');
   style.id = 'quantum-cursor-styles';
   style.textContent = `
-    @media (pointer: fine) {
-      *, *::before, *::after {
+    @media (any-pointer: fine), (pointer: fine) {
+      html, body, *, *::before, *::after {
         cursor: none !important;
       }
     }
@@ -941,6 +942,11 @@ function initAllOncoQuantumFX() {
   initCardOncoScanAnimation();
   initCardQuantumPancreasAnimation();
   initQuantumCursor();
+}
+
+// Immediate cursor ignition so pointer never flickers while waiting for heavy DOM/Canvas
+if (document.body || document.documentElement) {
+  try { initQuantumCursor(); } catch (e) {}
 }
 
 if (document.readyState === 'loading') {

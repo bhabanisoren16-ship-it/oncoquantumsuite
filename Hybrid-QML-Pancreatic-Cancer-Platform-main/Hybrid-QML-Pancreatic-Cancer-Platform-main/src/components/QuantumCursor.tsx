@@ -2,8 +2,11 @@ import React, { useEffect } from "react";
 
 export const QuantumCursor: React.FC = () => {
   useEffect(() => {
-    // Only enable on non-touch pointer devices
-    if (!window.matchMedia("(pointer: fine)").matches) return;
+    // Enable on any pointer device with fine accuracy (mouse, trackpad)
+    const hasPointer =
+      window.matchMedia("(pointer: fine)").matches ||
+      window.matchMedia("(any-pointer: fine)").matches;
+    if (!hasPointer) return;
 
     // Inject simple, clean styles
     const styleId = "quantum-cursor-fx-style";
@@ -11,8 +14,8 @@ export const QuantumCursor: React.FC = () => {
       const style = document.createElement("style");
       style.id = styleId;
       style.textContent = `
-        @media (pointer: fine) {
-          *, *::before, *::after {
+        @media (any-pointer: fine), (pointer: fine) {
+          html, body, *, *::before, *::after {
             cursor: none !important;
           }
         }
@@ -87,13 +90,21 @@ export const QuantumCursor: React.FC = () => {
       document.head.appendChild(style);
     }
 
-    const dot = document.createElement("div");
-    dot.className = "q-cursor-dot";
-    document.body.appendChild(dot);
+    let dot = document.getElementById("quantum-cursor-dot") as HTMLDivElement | null;
+    if (!dot) {
+      dot = document.createElement("div");
+      dot.id = "quantum-cursor-dot";
+      dot.className = "q-cursor-dot";
+      document.body.appendChild(dot);
+    }
 
-    const ring = document.createElement("div");
-    ring.className = "q-cursor-ring";
-    document.body.appendChild(ring);
+    let ring = document.getElementById("quantum-cursor-ring") as HTMLDivElement | null;
+    if (!ring) {
+      ring = document.createElement("div");
+      ring.id = "quantum-cursor-ring";
+      ring.className = "q-cursor-ring";
+      document.body.appendChild(ring);
+    }
 
     let mouseX = -100;
     let mouseY = -100;

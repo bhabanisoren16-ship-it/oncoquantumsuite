@@ -3,6 +3,13 @@
    Aesthetic: Minimalist Obsidian & Surgical Cobalt / Multi-Cancer Semantics
    ========================================================================== */
 
+/* Universal Cursor Suppression for Fine Pointers (prevents normal OS cursor flicker on page open) */
+@media (any-pointer: fine), (pointer: fine) {
+  html, body, *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 :root {
   /* Surface & Background Hierarchy */
   --bg-base: #02040a;

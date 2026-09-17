@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+/* Universal Cursor Suppression for Fine Pointers (prevents normal OS cursor flicker on page open) */
+@media (any-pointer: fine), (pointer: fine) {
+  html, body, *, *::before, *::after {
+    cursor: none !important;
+  }
+}
+
 @keyframes ambientBreathe {
   0%, 100% {
     transform: scale(1) translate(0, 0);

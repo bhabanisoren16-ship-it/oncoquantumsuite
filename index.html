@@ -55,6 +55,13 @@
       --transition-smooth: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
+    /* Instant Cursor Suppression for Fine Pointers (prevents normal OS cursor flicker on page open) */
+    @media (any-pointer: fine), (pointer: fine) {
+      html, body, *, *::before, *::after {
+        cursor: none !important;
+      }
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;

@@ -10,6 +10,12 @@
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <style>
+      @media (any-pointer: fine), (pointer: fine) {
+        html, body, *, *::before, *::after {
+          cursor: none !important;
+        }
+      }
+
       html, body {
         margin: 0;
         padding: 0;

@@ -40,6 +40,12 @@ try {
     <meta name="twitter:card" content="summary_large_image" />
     
     <style>
+      @media (any-pointer: fine), (pointer: fine) {
+        html, body, *, *::before, *::after {
+          cursor: none !important;
+        }
+      }
+
       html, body {
         margin: 0;
         padding: 0;
@@ -47,7 +53,126 @@ try {
         color: #f8fafc;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
+
+      .q-cursor-dot {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: #22d3ee;
+        box-shadow: 0 0 8px #22d3ee;
+        pointer-events: none;
+        z-index: 999999;
+        transform: translate(-50%, -50%);
+        transition: width 0.18s ease, height 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease;
+        opacity: 0;
+      }
+
+      .q-cursor-ring {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(34, 211, 238, 0.45);
+        pointer-events: none;
+        z-index: 999998;
+        transform: translate(-50%, -50%);
+        transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), height 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, transform 0.08s ease, opacity 0.2s ease;
+        opacity: 0;
+      }
+
+      .q-cursor-ring.hovering {
+        width: 40px;
+        height: 40px;
+        border-color: rgba(168, 85, 247, 0.75);
+        background-color: rgba(168, 85, 247, 0.08);
+      }
+
+      .q-cursor-dot.hovering {
+        width: 4px;
+        height: 4px;
+        background: #a855f7;
+        box-shadow: 0 0 10px #a855f7;
+      }
+
+      .q-cursor-ring.clicking {
+        width: 20px;
+        height: 20px;
+        border-color: #a855f7;
+        background-color: rgba(168, 85, 247, 0.15);
+      }
+
+      .q-cursor-dot.clicking {
+        transform: translate(-50%, -50%) scale(0.8);
+      }
     </style>
+
+    <!-- Immediate Pre-Boot Quantum Cursor (prevents any default OS cursor appearing during initial load) -->
+    <script>
+      (function() {
+        if (typeof window === 'undefined') return;
+        var hasPointer = window.matchMedia && (window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches);
+        if (!hasPointer) return;
+
+        function bootCursor() {
+          if (document.getElementById('quantum-cursor-dot')) return;
+          var dot = document.createElement('div');
+          dot.id = 'quantum-cursor-dot';
+          dot.className = 'q-cursor-dot';
+          var ring = document.createElement('div');
+          ring.id = 'quantum-cursor-ring';
+          ring.className = 'q-cursor-ring';
+          var parent = document.body || document.documentElement;
+          parent.appendChild(dot);
+          parent.appendChild(ring);
+
+          var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, isVisible = false;
+          window.addEventListener('mousemove', function(e) {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            if (!isVisible) {
+              isVisible = true;
+              dot.style.opacity = '1';
+              ring.style.opacity = '1';
+              ringX = mouseX;
+              ringY = mouseY;
+            }
+            dot.style.transform = 'translate3d(' + mouseX + 'px, ' + mouseY + 'px, 0) translate(-50%, -50%)';
+          }, { passive: true });
+
+          window.addEventListener('mouseleave', function() {
+            isVisible = false;
+            dot.style.opacity = '0';
+            ring.style.opacity = '0';
+          });
+          window.addEventListener('mouseenter', function() {
+            isVisible = true;
+            dot.style.opacity = '1';
+            ring.style.opacity = '1';
+          });
+
+          function render() {
+            if (isVisible) {
+              ringX += (mouseX - ringX) * 0.18;
+              ringY += (mouseY - ringY) * 0.18;
+              ring.style.transform = 'translate3d(' + ringX + 'px, ' + ringY + 'px, 0) translate(-50%, -50%)';
+            }
+            requestAnimationFrame(render);
+          }
+          requestAnimationFrame(render);
+        }
+
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', bootCursor, { once: true });
+        } else {
+          bootCursor();
+        }
+      })();
+    </script>
 
     <!-- Universal Dual-Path Resolver: Works seamlessly on file://, /qml, /qml/, and subpaths -->
     <script>
@@ -110,8 +235,8 @@ try {
       const activeJsFullPath = path.join(qmlAssetsDir, jsFile);
       const activeCssFullPath = path.join(qmlAssetsDir, cssFile);
 
-      const legacyJsAliases = ['index.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', 'index-wFyglsvi.js', jsFile];
-      const legacyCssAliases = ['index.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', cssFile];
+      const legacyJsAliases = ['index.js', 'index-Djo3CCbO.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', 'index-wFyglsvi.js', jsFile];
+      const legacyCssAliases = ['index.css', 'index-VD4-XD_O.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', cssFile];
 
       legacyJsAliases.forEach(alias => {
         // Copy into qml/assets
