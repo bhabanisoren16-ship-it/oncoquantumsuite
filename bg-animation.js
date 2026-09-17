@@ -62,8 +62,11 @@ function initQuantumGenomicBackground() {
     }
 
     update() {
-      this.x += this.vx;
-      this.y += this.vy;
+      // Elegant sinusoidal floating micro-drift for organic fluid motion
+      const floatY = Math.sin(this.phase) * 0.20;
+      const floatX = Math.cos(this.phase * 0.75) * 0.15;
+      this.x += this.vx + floatX;
+      this.y += this.vy + floatY;
       this.phase += this.phaseSpeed;
       this.orbitAngle += this.orbitSpeed;
 
@@ -164,12 +167,12 @@ function initQuantumGenomicBackground() {
           ctx.stroke();
 
           // Spawn quantum energy pulse along connection
-          if (frameCount % 20 === 0 && Math.random() < 0.20 && linePulses.length < 18) {
+          if (frameCount % 14 === 0 && Math.random() < 0.28 && linePulses.length < 26) {
             linePulses.push({
               p1Index: i,
               p2Index: j,
               progress: 0,
-              speed: 0.015 + Math.random() * 0.02,
+              speed: 0.016 + Math.random() * 0.022,
               color: p1.theme.color,
             });
           }
