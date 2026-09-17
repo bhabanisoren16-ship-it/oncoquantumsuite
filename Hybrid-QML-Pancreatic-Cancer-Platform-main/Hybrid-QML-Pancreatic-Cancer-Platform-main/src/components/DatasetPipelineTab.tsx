@@ -12,11 +12,7 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
   const [filterDiag, setFilterDiag] = useState<string>("all");
   const [selectedBiomarker, setSelectedBiomarker] = useState<string>("lyve1");
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [selectedBarIndex, setSelectedBarIndex] = useState<number | null>(null);
-  const [hoveredBarIndex, setHoveredBarIndex] = useState<number | null>(null);
-  const [activeSeries, setActiveSeries] = useState<"all" | "Control" | "PDAC">("all");
-
-  const activeBarIndex = hoveredBarIndex !== null ? hoveredBarIndex : selectedBarIndex;
+  const [selectedMarker, setSelectedMarker] = useState<string | null>(null);
 
   const filteredData = dataset.filter((p) => {
     if (filterDiag === "0" && p.diagnosis !== 0) return false;
@@ -202,24 +198,24 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                 Comparing benign conditions (chronic pancreatitis, gallstones) vs early malignancy
               </p>
             </div>
-            {selectedBarIndex !== null ? (
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs font-mono text-cyan-400 bg-cyan-950 border border-cyan-700 px-2 py-0.5 rounded flex items-center gap-1.5 shadow-sm shadow-cyan-950">
-                  <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse"></span>
-                  Selected: {biomarkerComparisonData[selectedBarIndex].marker.split(" ")[0]} ({biomarkerComparisonData[selectedBarIndex].foldChange})
+            {selectedMarker !== null ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-mono text-cyan-300 bg-cyan-950 border border-cyan-700 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 shadow-sm shadow-cyan-950">
+                  <span className="h-2 w-2 rounded-full bg-cyan-400 animate-pulse"></span>
+                  Selected: {selectedMarker.split(" ")[0]} ({biomarkerComparisonData.find((b) => b.marker === selectedMarker)?.foldChange})
                 </span>
                 <button
                   type="button"
-                  onClick={() => setSelectedBarIndex(null)}
-                  className="text-[10px] text-slate-400 hover:text-slate-100 bg-slate-800 hover:bg-slate-700 px-1.5 py-0.5 rounded transition"
+                  onClick={() => setSelectedMarker(null)}
+                  className="text-[10px] text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 px-2 py-0.5 rounded transition"
                   title="Clear locked bar selection"
                 >
                   Reset
                 </button>
               </div>
             ) : (
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2 py-0.5 rounded">
-                Click graph to lock highlight
+              <span className="text-xs font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-2.5 py-0.5 rounded">
+                Click graph to change color
               </span>
             )}
           </div>
@@ -229,15 +225,9 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
               <BarChart
                 data={biomarkerComparisonData}
                 margin={{ top: 12, right: 15, bottom: 20, left: 10 }}
-                onMouseMove={(state) => {
-                  if (state && state.activeTooltipIndex !== undefined) {
-                    setHoveredBarIndex(state.activeTooltipIndex);
-                  }
-                }}
-                onMouseLeave={() => setHoveredBarIndex(null)}
                 onClick={(state) => {
-                  if (state && state.activeTooltipIndex !== undefined) {
-                    setSelectedBarIndex((prev) => (prev === state.activeTooltipIndex ? null : state.activeTooltipIndex));
+                  if (state && state.activeLabel) {
+                    setSelectedMarker((prev) => (prev === state.activeLabel ? null : state.activeLabel));
                   }
                 }}
                 className="cursor-pointer select-none"
@@ -246,15 +236,11 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                 <XAxis dataKey="marker" stroke="#64748b" tick={{ fontSize: 10 }} />
                 <YAxis stroke="#64748b" tick={{ fontSize: 11 }} />
                 <Tooltip
-                  cursor={{
-                    fill: "rgba(34, 211, 238, 0.08)",
-                    stroke: "rgba(34, 211, 238, 0.25)",
-                    strokeWidth: 1,
-                    rx: 6,
-                  }}
+                  cursor={{ fill: "rgba(255, 255, 255, 0.03)" }}
                   content={({ payload, label }) => {
                     if (payload && payload.length) {
                       const item = biomarkerComparisonData.find((b) => b.marker === label);
+                      const isSelected = selectedMarker === label;
                       return (
                         <div className="bg-slate-950 border border-slate-700 rounded-lg p-3 text-xs shadow-2xl space-y-1.5 min-w-[170px]">
                           <div className="font-semibold text-slate-100 flex items-center justify-between border-b border-slate-800 pb-1">
@@ -265,19 +251,23 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center justify-between text-cyan-400 font-mono">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2 w-2 rounded-full bg-cyan-400"></span>
+                          <div className="flex items-center justify-between font-mono">
+                            <span className="flex items-center gap-1.5 text-slate-300">
+                              <span className={`h-2 w-2 rounded-full ${isSelected ? "bg-cyan-400" : "bg-emerald-500"}`}></span>
                               Control:
                             </span>
-                            <span>{payload[0]?.value}</span>
+                            <span className={isSelected ? "text-cyan-400 font-bold" : "text-emerald-400 font-semibold"}>
+                              {payload[0]?.value}
+                            </span>
                           </div>
-                          <div className="flex items-center justify-between text-rose-400 font-mono">
-                            <span className="flex items-center gap-1.5">
-                              <span className="h-2 w-2 rounded-full bg-rose-400"></span>
+                          <div className="flex items-center justify-between font-mono">
+                            <span className="flex items-center gap-1.5 text-slate-300">
+                              <span className={`h-2 w-2 rounded-full ${isSelected ? "bg-amber-400" : "bg-rose-500"}`}></span>
                               PDAC:
                             </span>
-                            <span>{payload[1]?.value}</span>
+                            <span className={isSelected ? "text-amber-400 font-bold" : "text-rose-400 font-semibold"}>
+                              {payload[1]?.value}
+                            </span>
                           </div>
                         </div>
                       );
@@ -286,39 +276,31 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                   }}
                 />
                 <Bar dataKey="Control" radius={[4, 4, 0, 0]}>
-                  {biomarkerComparisonData.map((entry, index) => {
-                    const isSelected = activeBarIndex === index;
-                    const isDimmed = (activeBarIndex !== null && !isSelected) || activeSeries === "PDAC";
-                    const fillColor = isSelected
-                      ? "#22d3ee" // Bright Cyan when selected
-                      : isDimmed
-                      ? "rgba(16, 185, 129, 0.25)" // Dimmed when other is selected
-                      : "#10b981"; // Default emerald
+                  {biomarkerComparisonData.map((entry) => {
+                    const isSelected = selectedMarker === entry.marker;
                     return (
                       <Cell
-                        key={`cell-ctrl-${index}`}
-                        fill={fillColor}
-                        stroke={isSelected ? "#a5f3fc" : "transparent"}
-                        strokeWidth={isSelected ? 1.5 : 0}
+                        key={`cell-ctrl-${entry.marker}`}
+                        fill={isSelected ? "#06b6d4" : "#10b981"}
+                        stroke={isSelected ? "#67e8f9" : "transparent"}
+                        strokeWidth={isSelected ? 2 : 0}
+                        cursor="pointer"
+                        onClick={() => setSelectedMarker((prev) => (prev === entry.marker ? null : entry.marker))}
                       />
                     );
                   })}
                 </Bar>
                 <Bar dataKey="PDAC" radius={[4, 4, 0, 0]}>
-                  {biomarkerComparisonData.map((entry, index) => {
-                    const isSelected = activeBarIndex === index;
-                    const isDimmed = (activeBarIndex !== null && !isSelected) || activeSeries === "Control";
-                    const fillColor = isSelected
-                      ? "#fb7185" // Bright Neon Rose when selected
-                      : isDimmed
-                      ? "rgba(244, 63, 94, 0.25)" // Dimmed when other is selected
-                      : "#f43f5e"; // Default rose
+                  {biomarkerComparisonData.map((entry) => {
+                    const isSelected = selectedMarker === entry.marker;
                     return (
                       <Cell
-                        key={`cell-pdac-${index}`}
-                        fill={fillColor}
-                        stroke={isSelected ? "#ffe4e6" : "transparent"}
-                        strokeWidth={isSelected ? 1.5 : 0}
+                        key={`cell-pdac-${entry.marker}`}
+                        fill={isSelected ? "#f59e0b" : "#f43f5e"}
+                        stroke={isSelected ? "#fde047" : "transparent"}
+                        strokeWidth={isSelected ? 2 : 0}
+                        cursor="pointer"
+                        onClick={() => setSelectedMarker((prev) => (prev === entry.marker ? null : entry.marker))}
                       />
                     );
                   })}
@@ -327,54 +309,22 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
             </ResponsiveContainer>
           </div>
 
-          {/* Interactive Legend & Series Filter */}
+          {/* Interactive Legend */}
           <div className="flex flex-wrap items-center justify-between text-xs pt-3 border-t border-slate-800 text-slate-400 gap-2">
-            <div className="flex items-center space-x-3">
-              <button
-                type="button"
-                onClick={() => setActiveSeries((prev) => (prev === "Control" ? "all" : "Control"))}
-                className={`flex items-center space-x-1.5 px-2 py-0.5 rounded transition ${
-                  activeSeries === "Control"
-                    ? "bg-cyan-950 border border-cyan-500 text-cyan-300 font-semibold"
-                    : activeSeries === "all"
-                    ? "hover:bg-slate-800/60 text-slate-300"
-                    : "opacity-40 hover:opacity-100"
-                }`}
-                title="Click to filter/highlight Control series"
-              >
-                <span className={`h-2.5 w-2.5 rounded-sm ${activeBarIndex !== null ? "bg-cyan-400" : "bg-emerald-500"}`} />
-                <span>Control {activeBarIndex !== null && <span className="text-[10px] text-cyan-400 font-mono">(Cyan)</span>}</span>
-              </button>
+            <div className="flex items-center space-x-5">
+              <div className="flex items-center space-x-2 text-slate-300">
+                <span className={`h-3 w-3 rounded-sm transition-colors ${selectedMarker ? "bg-cyan-400" : "bg-[#10b981]"}`} />
+                <span>Control <span className="text-[11px] text-slate-400 font-mono">({selectedMarker ? "Cyan" : "Emerald"})</span></span>
+              </div>
 
-              <button
-                type="button"
-                onClick={() => setActiveSeries((prev) => (prev === "PDAC" ? "all" : "PDAC"))}
-                className={`flex items-center space-x-1.5 px-2 py-0.5 rounded transition ${
-                  activeSeries === "PDAC"
-                    ? "bg-rose-950 border border-rose-500 text-rose-300 font-semibold"
-                    : activeSeries === "all"
-                    ? "hover:bg-slate-800/60 text-slate-300"
-                    : "opacity-40 hover:opacity-100"
-                }`}
-                title="Click to filter/highlight PDAC series"
-              >
-                <span className={`h-2.5 w-2.5 rounded-sm ${activeBarIndex !== null ? "bg-rose-400" : "bg-rose-500"}`} />
-                <span>PDAC {activeBarIndex !== null && <span className="text-[10px] text-rose-400 font-mono">(Neon Rose)</span>}</span>
-              </button>
-
-              {activeSeries !== "all" && (
-                <button
-                  type="button"
-                  onClick={() => setActiveSeries("all")}
-                  className="text-[10px] text-cyan-400 hover:underline"
-                >
-                  Show Both
-                </button>
-              )}
+              <div className="flex items-center space-x-2 text-slate-300">
+                <span className={`h-3 w-3 rounded-sm transition-colors ${selectedMarker ? "bg-amber-400" : "bg-[#f43f5e]"}`} />
+                <span>PDAC <span className="text-[11px] text-slate-400 font-mono">({selectedMarker ? "Amber" : "Rose"})</span></span>
+              </div>
             </div>
 
             <span className="text-[11px] text-slate-400 italic">
-              {selectedBarIndex !== null ? "Click bar to unlock selection" : "Hover or click bar to highlight"}
+              {selectedMarker ? "Click selected graph again to restore default colors" : "Click on any graph to change its color"}
             </span>
           </div>
 

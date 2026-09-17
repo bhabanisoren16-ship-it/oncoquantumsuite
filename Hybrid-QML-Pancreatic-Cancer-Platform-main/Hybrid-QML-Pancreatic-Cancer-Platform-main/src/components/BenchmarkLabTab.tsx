@@ -185,31 +185,31 @@ export const BenchmarkLabTab: React.FC<BenchmarkLabTabProps> = ({ benchmarks, th
                   type="monotone"
                   dataKey="qml"
                   name="Quantum VQC (AUC = 0.924)"
-                  stroke={activeModel === "qml" ? "#06b6d4" : activeModel ? "rgba(56, 189, 248, 0.22)" : "#38bdf8"}
-                  strokeWidth={activeModel === "qml" ? 4.5 : activeModel ? 1.5 : 3}
-                  dot={activeModel === "qml" ? { r: 4, fill: "#22d3ee", stroke: "#fff", strokeWidth: 1.5 } : false}
+                  stroke={activeModel === "qml" ? "#06b6d4" : "#38bdf8"}
+                  strokeWidth={activeModel === "qml" ? 4.5 : 3}
+                  dot={activeModel === "qml" ? { r: 4.5, fill: "#22d3ee", stroke: "#fff", strokeWidth: 2 } : false}
                 />
                 <Line
                   type="monotone"
                   dataKey="svm"
                   name="Classical SVM (AUC = 0.887)"
-                  stroke={activeModel === "svm" ? "#e879f9" : activeModel ? "rgba(168, 85, 247, 0.22)" : "#a855f7"}
-                  strokeWidth={activeModel === "svm" ? 4 : activeModel ? 1.5 : 2}
-                  dot={activeModel === "svm" ? { r: 4, fill: "#e879f9", stroke: "#fff", strokeWidth: 1.5 } : false}
+                  stroke={activeModel === "svm" ? "#e879f9" : "#a855f7"}
+                  strokeWidth={activeModel === "svm" ? 4 : 2}
+                  dot={activeModel === "svm" ? { r: 4, fill: "#e879f9", stroke: "#fff", strokeWidth: 2 } : false}
                 />
                 <Line
                   type="monotone"
                   dataKey="rf"
                   name="Random Forest (AUC = 0.871)"
-                  stroke={activeModel === "rf" ? "#fbbf24" : activeModel ? "rgba(245, 158, 11, 0.22)" : "#f59e0b"}
-                  strokeWidth={activeModel === "rf" ? 4 : activeModel ? 1.5 : 2}
-                  dot={activeModel === "rf" ? { r: 4, fill: "#fbbf24", stroke: "#fff", strokeWidth: 1.5 } : false}
+                  stroke={activeModel === "rf" ? "#fbbf24" : "#f59e0b"}
+                  strokeWidth={activeModel === "rf" ? 4 : 2}
+                  dot={activeModel === "rf" ? { r: 4, fill: "#fbbf24", stroke: "#fff", strokeWidth: 2 } : false}
                 />
                 <Line
                   type="monotone"
                   dataKey="chance"
                   name="Chance Baseline (AUC = 0.500)"
-                  stroke={activeModel === "chance" ? "#cbd5e1" : activeModel ? "rgba(100, 116, 139, 0.22)" : "#64748b"}
+                  stroke={activeModel === "chance" ? "#f8fafc" : "#64748b"}
                   strokeDasharray="5 5"
                   strokeWidth={activeModel === "chance" ? 2.5 : 1}
                   dot={false}
