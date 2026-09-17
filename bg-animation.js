@@ -741,13 +741,13 @@ function initQuantumCursor() {
       position: fixed;
       top: 0;
       left: 0;
-      width: ${isOncoScan ? '6px' : '7px'};
-      height: ${isOncoScan ? '6px' : '7px'};
+      width: ${isOncoScan ? '5px' : '5px'};
+      height: ${isOncoScan ? '5px' : '5px'};
       border-radius: 50%;
-      background: ${isOncoScan ? '#0ea5e9' : '#ffffff'};
+      background: ${isOncoScan ? '#0ea5e9' : 'rgba(255, 255, 255, 0.9)'};
       box-shadow: ${isOncoScan 
-        ? '0 0 8px #0ea5e9' 
-        : '0 0 6px #ffffff, 0 0 12px #22d3ee, 0 0 20px rgba(34, 211, 238, 0.6)'};
+        ? '0 0 5px rgba(14, 165, 233, 0.5)' 
+        : '0 0 6px rgba(34, 211, 238, 0.45)'};
       pointer-events: none;
       z-index: 999999;
       transform: translate(-50%, -50%);
@@ -763,15 +763,14 @@ function initQuantumCursor() {
       position: fixed;
       top: 0;
       left: 0;
-      width: ${isOncoScan ? '26px' : '30px'};
-      height: ${isOncoScan ? '26px' : '30px'};
+      width: ${isOncoScan ? '24px' : '26px'};
+      height: ${isOncoScan ? '24px' : '26px'};
       border-radius: 50%;
-      border: 1.5px solid ${isOncoScan ? 'rgba(14, 165, 233, 0.45)' : 'rgba(34, 211, 238, 0.75)'};
+      border: 1px solid ${isOncoScan ? 'rgba(14, 165, 233, 0.35)' : 'rgba(34, 211, 238, 0.45)'};
       box-shadow: ${isOncoScan 
         ? 'none' 
-        : '0 0 14px rgba(34, 211, 238, 0.35), inset 0 0 8px rgba(168, 85, 247, 0.2)'};
-      background-color: ${isOncoScan ? 'transparent' : 'rgba(34, 211, 238, 0.05)'};
-      backdrop-filter: ${isOncoScan ? 'none' : 'blur(1px)'};
+        : '0 0 8px rgba(34, 211, 238, 0.18)'};
+      background-color: transparent;
       pointer-events: none;
       z-index: 999998;
       transform: translate(-50%, -50%);
@@ -787,29 +786,29 @@ function initQuantumCursor() {
 
     /* Hovering state over interactive elements */
     .q-cursor-ring.hovering {
-      width: ${isOncoScan ? '40px' : '44px'};
-      height: ${isOncoScan ? '40px' : '44px'};
-      border-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.75)' : 'rgba(168, 85, 247, 0.9)'};
-      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.08)' : 'rgba(168, 85, 247, 0.12)'};
+      width: ${isOncoScan ? '34px' : '36px'};
+      height: ${isOncoScan ? '34px' : '36px'};
+      border-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.6)' : 'rgba(168, 85, 247, 0.65)'};
+      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.04)' : 'rgba(168, 85, 247, 0.05)'};
       box-shadow: ${isOncoScan 
         ? 'none' 
-        : '0 0 22px rgba(168, 85, 247, 0.5), inset 0 0 12px rgba(34, 211, 238, 0.25)'};
+        : '0 0 10px rgba(168, 85, 247, 0.22)'};
     }
 
     .q-cursor-dot.hovering {
-      width: ${isOncoScan ? '4px' : '5px'};
-      height: ${isOncoScan ? '4px' : '5px'};
+      width: 4px;
+      height: 4px;
       background: ${isOncoScan ? '#10b981' : '#ffffff'};
-      box-shadow: ${isOncoScan ? '0 0 10px #10b981' : '0 0 8px #ffffff, 0 0 16px #c084fc'};
+      box-shadow: ${isOncoScan ? '0 0 5px rgba(16, 185, 129, 0.6)' : '0 0 5px rgba(192, 132, 252, 0.5)'};
     }
 
     /* Subtle press state on click */
     .q-cursor-ring.clicking {
-      width: ${isOncoScan ? '20px' : '22px'};
-      height: ${isOncoScan ? '20px' : '22px'};
+      width: ${isOncoScan ? '18px' : '20px'};
+      height: ${isOncoScan ? '18px' : '20px'};
       border-color: ${isOncoScan ? hoverColor : '#22d3ee'};
-      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.15)' : 'rgba(34, 211, 238, 0.2)'};
-      box-shadow: ${isOncoScan ? 'none' : '0 0 16px rgba(34, 211, 238, 0.6)'};
+      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.1)' : 'rgba(34, 211, 238, 0.1)'};
+      box-shadow: ${isOncoScan ? 'none' : '0 0 8px rgba(34, 211, 238, 0.3)'};
     }
     .q-cursor-dot.clicking {
       transform: translate(-50%, -50%) scale(0.8);
