@@ -328,7 +328,7 @@ button {
   display: grid;
   grid-template-columns: minmax(460px, 1fr) minmax(560px, 1.25fr);
   gap: 22px;
-  align-items: start;
+  align-items: stretch;
 }
 
 @media (max-width: 1140px) {
@@ -344,6 +344,9 @@ button {
   border-radius: var(--radius-lg);
   padding: 22px;
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .panel-header {
@@ -677,15 +680,46 @@ button {
   border-color: var(--primary);
 }
 
-/* Slider Row */
+/* Sliders Responsive Cockpit Grid (2-Column Desktop, 1-Column Mobile) */
+.sliders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px 12px;
+}
+
+@media (max-width: 640px) {
+  .sliders-grid {
+    grid-template-columns: 1fr;
+    gap: 6px 0;
+  }
+}
+
+#group-universal-sliders .slider-item:last-child {
+  grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+  #group-universal-sliders .slider-item:last-child {
+    grid-column: span 1;
+  }
+}
+
+/* Slider Row & Compact Card Style */
 .slider-item {
-  padding: 7px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: var(--radius-sm);
+  transition: var(--transition-fast);
+}
+
+.slider-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(56, 189, 248, 0.2);
 }
 
 .slider-item:last-child {
-  border-bottom: none;
-  padding-bottom: 2px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .slider-label-row {
@@ -693,6 +727,7 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
+  gap: 6px;
 }
 
 .slider-gene-name {
@@ -708,6 +743,7 @@ button {
   padding: 1px 6px;
   border-radius: var(--radius-full);
   letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
 .status-pill-normal {
@@ -725,18 +761,19 @@ button {
 .slider-controls {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .gene-number-input {
-  width: 58px;
-  height: 24px;
+  width: 48px;
+  height: 22px;
   background: var(--bg-input);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xs);
-  padding: 2px 6px;
+  padding: 1px 5px;
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   font-weight: 600;
   color: var(--primary-light);
   text-align: right;
@@ -1502,8 +1539,88 @@ button {
 }
 
 .val-high {
-  color: var(--primary-light);
+  color: var(--color-brca-light, #fb7185);
   font-weight: 700;
+}
+
+.val-low {
+  color: var(--color-luad-light, #38bdf8);
+  font-weight: 700;
+}
+
+/* Results Panel Benchmark Matrix Section */
+.cohort-benchmark-matrix-block {
+  margin-top: 6px;
+  background: var(--bg-surface-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+}
+
+.matrix-unit-badge {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  color: var(--primary-light);
+  background: rgba(14, 165, 233, 0.1);
+  padding: 2px 8px;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+
+.benchmark-matrix-table {
+  margin-top: 6px;
+}
+
+.benchmark-matrix-table th {
+  padding: 6px 8px;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.benchmark-matrix-table td {
+  padding: 6px 8px;
+}
+
+.matrix-row-patient {
+  background: rgba(14, 165, 233, 0.08);
+  border-bottom: 2px solid rgba(14, 165, 233, 0.3) !important;
+}
+
+.matrix-row-patient td {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.dot-patient {
+  background: var(--primary-light);
+  box-shadow: 0 0 8px var(--primary);
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.live-eval-chip {
+  font-size: 0.68rem;
+  font-family: var(--font-mono);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: rgba(14, 165, 233, 0.15);
+  color: var(--primary-light);
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.cohort-desc-chip {
+  font-size: 0.66rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 2px 6px;
+  border-radius: var(--radius-xs);
+  white-space: nowrap;
 }
 
 .drawer-backdrop {
@@ -1591,3 +1708,257 @@ button {
   font-family: var(--font-mono);
   font-size: 0.72rem;
 }
+
+/* ==========================================================================
+   ONCOSCAN AI DEDICATED CLINICAL BOOT SCREEN
+   ========================================================================== */
+.oncoscan-boot-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(6, 10, 20, 0.95);
+  backdrop-filter: blur(26px);
+  -webkit-backdrop-filter: blur(26px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1), transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.oncoscan-boot-overlay.fade-out {
+  opacity: 0;
+  transform: scale(1.03);
+  pointer-events: none;
+}
+
+.boot-ambient-glow {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(14, 165, 233, 0.4) 0%, rgba(16, 185, 129, 0.15) 60%, transparent 80%);
+  filter: blur(120px);
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.boot-modal-card {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(14, 165, 233, 0.35);
+  border-radius: 24px;
+  padding: 34px 28px 28px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 40px rgba(14, 165, 233, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.boot-icon-wrapper {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.boot-radar-beam {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(14, 165, 233, 0.35) 60deg, transparent 65deg);
+  animation: boot-radar-spin 2.8s linear infinite;
+}
+
+.boot-pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px dashed rgba(56, 189, 248, 0.35);
+  animation: boot-radar-spin 12s linear infinite;
+}
+
+.boot-pulse-ring-inner {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  animation: boot-radar-spin 8s linear infinite reverse;
+}
+
+.boot-center-icon {
+  position: relative;
+  z-index: 2;
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(16, 185, 129, 0.25));
+  border: 1px solid rgba(56, 189, 248, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #38bdf8;
+  box-shadow: 0 0 24px rgba(14, 165, 233, 0.45);
+  animation: boot-icon-pulse 2.2s ease-in-out infinite;
+}
+
+@keyframes boot-radar-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes boot-icon-pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(14, 165, 233, 0.4); }
+  50% { transform: scale(1.06); box-shadow: 0 0 32px rgba(56, 189, 248, 0.7); }
+}
+
+.boot-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+  color: var(--primary-light);
+  background: rgba(14, 165, 233, 0.12);
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  padding: 5px 12px;
+  border-radius: 9999px;
+  margin-bottom: 12px;
+}
+
+.boot-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  box-shadow: 0 0 8px var(--primary-light);
+  animation: boot-dot-blink 1.2s infinite ease-in-out;
+}
+
+@keyframes boot-dot-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.boot-title {
+  font-size: 1.55rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #f8fafc 40%, #38bdf8 75%, #34d399 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 4px;
+}
+
+.boot-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin-bottom: 22px;
+  line-height: 1.4;
+  max-width: 420px;
+}
+
+.boot-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.boot-progress-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #0ea5e9, #38bdf8, #10b981);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.8);
+  transition: width 0.1s linear;
+}
+
+.boot-status-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.73rem;
+  margin-bottom: 18px;
+}
+
+.boot-step-label {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 82%;
+}
+
+.boot-pct-label {
+  color: var(--primary-light);
+  font-weight: 700;
+}
+
+.boot-pills-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.boot-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.boot-pill .boot-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.boot-pill.pill-brca {
+  background: rgba(244, 63, 94, 0.12);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.35);
+}
+.boot-pill.pill-brca .boot-dot { background: #f43f5e; }
+
+.boot-pill.pill-luad {
+  background: rgba(249, 115, 22, 0.12);
+  color: #fdba74;
+  border: 1px solid rgba(249, 115, 22, 0.35);
+}
+.boot-pill.pill-luad .boot-dot { background: #f97316; }
+
+.boot-pill.pill-pdac {
+  background: rgba(168, 85, 247, 0.12);
+  color: #d8b4fe;
+  border: 1px solid rgba(168, 85, 247, 0.35);
+}
+.boot-pill.pill-pdac .boot-dot { background: #a855f7; }
+
+.boot-pill.pill-kras {
+  background: rgba(14, 165, 233, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(14, 165, 233, 0.35);
+}
+.boot-pill.pill-kras .boot-dot { background: #0ea5e9; }
+

@@ -1089,6 +1089,40 @@
     .footer-links a:hover {
       color: var(--cyan-400);
     }
+
+    /* Sandbox preview loading state */
+    .sandbox-stage {
+      position: relative;
+      min-height: 520px;
+      width: 100%;
+    }
+    .sandbox-loader-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(6, 10, 20, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    .sandbox-loader-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .sandbox-spinner {
+      width: 42px;
+      height: 42px;
+      border: 3px solid rgba(34, 211, 238, 0.2);
+      border-top-color: var(--cyan-400);
+      border-radius: 50%;
+      animation: spin-clockwise 0.8s linear infinite;
+    }
   </style>
 </head>
 <body>
@@ -1336,7 +1370,14 @@
           </button>
         </div>
       </div>
-      <iframe class="sandbox-iframe" id="sandbox-iframe" src="" title="Live Platform Sandbox"></iframe>
+      <div class="sandbox-stage">
+        <div class="sandbox-loader-overlay" id="sandbox-loader">
+          <div class="sandbox-spinner"></div>
+          <div style="font-size: 0.9rem; font-weight: 600; color: var(--cyan-400); letter-spacing: 0.04em;" id="sandbox-loader-text">Loading Clinical Workspace...</div>
+          <div style="font-size: 0.76rem; color: var(--text-muted);">Calibrating live environment & sandbox frame</div>
+        </div>
+        <iframe class="sandbox-iframe" id="sandbox-iframe" src="" title="Live Platform Sandbox"></iframe>
+      </div>
     </div>
 
     <!-- ==========================================
@@ -1500,6 +1541,19 @@
       const popOutBtn = document.getElementById('sandbox-open-external-btn');
       const tabOnco = document.getElementById('tab-sandbox-oncoscan');
       const tabQml = document.getElementById('tab-sandbox-qml');
+      const loader = document.getElementById('sandbox-loader');
+      const loaderText = document.getElementById('sandbox-loader-text');
+
+      if (loader) {
+        loader.classList.add('active');
+        if (loaderText) {
+          loaderText.textContent = url.includes('oncoscan') ? 'Loading OncoScan AI Platform...' : 'Loading QuantumPancreas Hybrid QML...';
+        }
+      }
+
+      iframe.onload = () => {
+        if (loader) loader.classList.remove('active');
+      };
 
       iframe.src = url;
       popOutBtn.href = url;
@@ -1519,7 +1573,9 @@
     function closeEmbeddedSandbox() {
       const container = document.getElementById('sandbox-container');
       const iframe = document.getElementById('sandbox-iframe');
+      const loader = document.getElementById('sandbox-loader');
       container.classList.remove('active');
+      if (loader) loader.classList.remove('active');
       iframe.src = '';
     }
 
@@ -1527,11 +1583,11 @@
       checkServerStatus();
     });
 
-    // Run on load
     window.addEventListener('DOMContentLoaded', () => {
       checkServerStatus();
     });
   </script>
+
   <!-- Unified Quantum & Genomic Canvas and Cursor Animation Engine -->
   <script src="bg-animation.js"></script>
 </body>

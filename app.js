@@ -213,7 +213,7 @@ const DOM = {
 };
 
 // ==========================================
-// 5. INITIALIZATION
+// 5. INITIALIZATION & BOOT LOADER
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
   renderGeneSliders();
@@ -1292,6 +1292,43 @@ function runCancerMatch() {
 
   // 7. Clinical Action Text
   DOM.clinicalActionText.textContent = predictedCohort.clinicalAction;
+
+  // 8. Dynamic Cohort Benchmark Standards Matrix Live Row Update
+  const updateMatrixCell = (id, val, normalMean) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const num = typeof val === "number" ? val : parseFloat(val);
+    el.textContent = isNaN(num) ? "--" : num.toFixed(2);
+    if (num > (normalMean + 1.8)) {
+      el.className = "val-high";
+    } else if (num < (normalMean - 1.5)) {
+      el.className = "val-low";
+    } else {
+      el.className = "";
+    }
+  };
+
+  updateMatrixCell("m-val-brca1", patientState.genes.BRCA1 ?? 4.79, 4.79);
+  updateMatrixCell("m-val-erbb2", patientState.genes.ERBB2 ?? 5.61, 5.61);
+  updateMatrixCell("m-val-egfr",  patientState.genes.EGFR  ?? 5.88, 5.88);
+  updateMatrixCell("m-val-kras",  patientState.genes.KRAS  ?? 5.32, 5.32);
+  updateMatrixCell("m-val-cdk1",  patientState.genes.CDK1  ?? 4.72, 4.72);
+  updateMatrixCell("m-val-tp53",  patientState.genes.TP53  ?? 4.38, 4.38);
+
+  const statusEl = document.getElementById("matrix-patient-status");
+  if (statusEl) {
+    if (predictedCohort.category === "normal") {
+      statusEl.textContent = "Normal Baseline";
+      statusEl.style.color = "var(--color-normal-light)";
+      statusEl.style.borderColor = "rgba(16, 185, 129, 0.4)";
+      statusEl.style.background = "rgba(16, 185, 129, 0.15)";
+    } else {
+      statusEl.textContent = `${predictedCohort.name.split(" ")[0]} Profile`;
+      statusEl.style.color = predictedCohort.color;
+      statusEl.style.borderColor = `${predictedCohort.color}55`;
+      statusEl.style.background = `${predictedCohort.color}22`;
+    }
+  }
 }
 
 // Draw dynamic SVG Polar Radar Chart

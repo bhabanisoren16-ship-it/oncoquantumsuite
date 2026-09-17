@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="style.css?v=2.2">
+  <link rel="stylesheet" href="style.css?v=2.5">
 </head>
 <body>
 
@@ -475,6 +475,88 @@
           </button>
         </div>
 
+        <!-- 6. CLINICAL COHORT BENCHMARK & MULTI-GENE EXPRESSION MATRIX -->
+        <div class="result-block cohort-benchmark-matrix-block">
+          <div class="block-header">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <h4 class="block-title">Cohort Baseline Reference Standards</h4>
+              <span class="block-badge">700 TCGA & PAAD Samples</span>
+            </div>
+            <span class="matrix-unit-badge">log2 TPM Medians</span>
+          </div>
+          <p class="block-subdesc">
+            Direct comparison of patient sample against verified clinical reference cohorts across key driver axes:
+          </p>
+          <div class="table-responsive">
+            <table class="matrix-table benchmark-matrix-table" id="benchmark-matrix-table">
+              <thead>
+                <tr>
+                  <th>Cohort / Class</th>
+                  <th>BRCA1</th>
+                  <th>ERBB2</th>
+                  <th>EGFR</th>
+                  <th>KRAS</th>
+                  <th>CDK1</th>
+                  <th>TP53</th>
+                  <th>Cohort Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr id="matrix-row-patient" class="matrix-row-patient">
+                  <td><span class="dot dot-patient"></span> <strong>Live Patient</strong></td>
+                  <td id="m-val-brca1">4.8</td>
+                  <td id="m-val-erbb2">5.6</td>
+                  <td id="m-val-egfr">5.9</td>
+                  <td id="m-val-kras">5.3</td>
+                  <td id="m-val-cdk1">4.7</td>
+                  <td id="m-val-tp53">4.4</td>
+                  <td><span class="live-eval-chip" id="matrix-patient-status">Active Evaluation</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-normal"></span> Normal Control</td>
+                  <td>4.79</td>
+                  <td>5.61</td>
+                  <td>5.88</td>
+                  <td>5.32</td>
+                  <td>4.72</td>
+                  <td>4.38</td>
+                  <td><span class="cohort-desc-chip">Baseline (n=200)</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-brca"></span> Breast (BRCA)</td>
+                  <td><span class="val-high">8.64</span></td>
+                  <td><span class="val-high">9.40</span></td>
+                  <td>5.92</td>
+                  <td>5.34</td>
+                  <td>4.62</td>
+                  <td><span class="val-high">6.30</span></td>
+                  <td><span class="cohort-desc-chip">TCGA-BRCA (n=200)</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-luad"></span> Lung (LUAD)</td>
+                  <td>4.86</td>
+                  <td>5.57</td>
+                  <td><span class="val-high">9.89</span></td>
+                  <td><span class="val-high">9.25</span></td>
+                  <td>6.23</td>
+                  <td>4.42</td>
+                  <td><span class="cohort-desc-chip">TCGA-LUAD (n=200)</span></td>
+                </tr>
+                <tr>
+                  <td><span class="dot dot-pdac"></span> Pancreatic (PDAC)</td>
+                  <td>5.00</td>
+                  <td>5.40</td>
+                  <td>6.20</td>
+                  <td><span class="val-high">8.80</span></td>
+                  <td><span class="val-high">8.20</span></td>
+                  <td><span class="val-high">7.60</span></td>
+                  <td><span class="cohort-desc-chip">PAAD/JCLA (n=100)</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </section>
 
     </main>
@@ -606,7 +688,7 @@
 
   </div>
 
-  <script src="app.js?v=2.6"></script>
+  <script src="app.js?v=2.7"></script>
   <script src="bg-animation.js"></script>
 </body>
 </html>
