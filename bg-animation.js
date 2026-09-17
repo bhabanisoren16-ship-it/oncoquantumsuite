@@ -271,20 +271,21 @@ function initCardOncoScanAnimation() {
     constructor(index) {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * 0.28;
-      this.vy = (Math.random() - 0.5) * 0.24;
-      this.radius = Math.random() * 1.5 + 1.2;
+      this.vx = (Math.random() - 0.5) * 0.44;
+      this.vy = (Math.random() - 0.5) * 0.38;
+      this.radius = Math.random() * 1.6 + 1.4;
       this.theme = palette[Math.floor(Math.random() * palette.length)];
-      this.hasLabel = index % 3 === 0;
+      this.hasLabel = index % 2 === 0;
       this.label = codons[index % codons.length];
       this.phase = Math.random() * Math.PI * 2;
-      this.phaseSpeed = Math.random() * 0.02 + 0.01;
+      this.phaseSpeed = Math.random() * 0.025 + 0.012;
+      this.hasHalo = index % 4 === 0;
     }
 
     update() {
       // Gentle sinusoidal float for living motion
-      const floatY = Math.sin(this.phase) * 0.12;
-      const floatX = Math.cos(this.phase * 0.8) * 0.10;
+      const floatY = Math.sin(this.phase) * 0.22;
+      const floatX = Math.cos(this.phase * 0.8) * 0.18;
       this.x += this.vx + floatX;
       this.y += this.vy + floatY;
       this.phase += this.phaseSpeed;
@@ -300,7 +301,7 @@ function initCardOncoScanAnimation() {
         const dy = this.y - mouse.y;
         const dist = Math.hypot(dx, dy);
         if (dist < mouse.radius) {
-          const force = (1 - dist / mouse.radius) * 1.4;
+          const force = (1 - dist / mouse.radius) * 1.8;
           const angle = Math.atan2(dy, dx);
           this.x += Math.cos(angle) * force;
           this.y += Math.sin(angle) * force;
@@ -309,19 +310,31 @@ function initCardOncoScanAnimation() {
     }
 
     draw() {
-      const pulse = Math.sin(this.phase) * 0.30 + 0.70;
+      const pulse = Math.sin(this.phase) * 0.35 + 0.65;
       ctx.save();
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.60})`;
+      ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.75})`;
       ctx.shadowColor = this.theme.color;
-      ctx.shadowBlur = 5;
+      ctx.shadowBlur = 7;
       ctx.fill();
+
+      // Pulsing biomarker scanner radar halo ring
+      if (this.hasHalo) {
+        const haloScale = ((frame * 0.025 + this.phase) % 1);
+        const currentHaloR = this.radius + haloScale * 14;
+        const haloAlpha = (1 - haloScale) * 0.32;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, currentHaloR, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${haloAlpha})`;
+        ctx.lineWidth = 0.8;
+        ctx.stroke();
+      }
 
       // Readable scientific oncology label
       if (this.hasLabel) {
         ctx.font = '8.5px "JetBrains Mono", monospace';
-        ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.38})`;
+        ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.48})`;
         ctx.shadowBlur = 2;
         ctx.fillText(this.label, this.x + this.radius + 4, this.y + 3);
       }
@@ -335,14 +348,14 @@ function initCardOncoScanAnimation() {
   function createParticles() {
     particles = [];
     pulses = [];
-    const count = Math.min(Math.max(Math.floor((width * height) / 16000), 12), 16);
+    const count = Math.min(Math.max(Math.floor((width * height) / 9500), 18), 26);
     for (let i = 0; i < count; i++) {
       particles.push(new GeneNode(i));
     }
   }
 
   function drawConnections() {
-    const maxDist = 88;
+    const maxDist = 104;
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const p1 = particles[i];
@@ -352,21 +365,21 @@ function initCardOncoScanAnimation() {
         const dist = Math.hypot(dx, dy);
 
         if (dist < maxDist) {
-          const alpha = (1 - dist / maxDist) * 0.16;
+          const alpha = (1 - dist / maxDist) * 0.24;
           ctx.strokeStyle = `rgba(${p1.theme.r}, ${p1.theme.g}, ${p1.theme.b}, ${alpha})`;
-          ctx.lineWidth = 0.85;
+          ctx.lineWidth = 0.95;
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
 
           // Spawn traveling data pulse
-          if (frame % 28 === 0 && Math.random() < 0.20 && pulses.length < 5) {
+          if (frame % 16 === 0 && Math.random() < 0.35 && pulses.length < 8) {
             pulses.push({
               p1Index: i,
               p2Index: j,
               prog: 0,
-              spd: 0.016 + Math.random() * 0.015,
+              spd: 0.020 + Math.random() * 0.018,
               color: p1.theme.color
             });
           }
@@ -378,28 +391,31 @@ function initCardOncoScanAnimation() {
   // Double Helix wave curve in background
   function drawDnaHelix() {
     ctx.save();
-    const time = frame * 0.014;
-    const waveLength = 42;
-    const amplitude = 10;
+    const time = frame * 0.016;
+    const waveLength = 40;
+    const amplitude = 14;
     const startX = width - 42;
-    const points = Math.floor(height / 12);
+    const points = Math.floor(height / 11);
 
     for (let i = 0; i < points; i++) {
-      const y = i * 12;
+      const y = i * 11;
       const x1 = startX + Math.sin(time + y / waveLength) * amplitude;
       const x2 = startX - Math.sin(time + y / waveLength) * amplitude;
-      const alpha = 0.09 + (Math.sin(time + y / 22) * 0.05);
+      const alpha = 0.16 + (Math.sin(time + y / 20) * 0.08);
 
       // Base nodes
       ctx.fillStyle = `rgba(34, 211, 238, ${alpha})`;
-      ctx.fillRect(x1, y, 1.8, 1.8);
+      ctx.shadowColor = '#22d3ee';
+      ctx.shadowBlur = 4;
+      ctx.fillRect(x1 - 1, y - 1, 2.2, 2.2);
       ctx.fillStyle = `rgba(52, 211, 153, ${alpha})`;
-      ctx.fillRect(x2, y, 1.8, 1.8);
+      ctx.shadowColor = '#34d399';
+      ctx.fillRect(x2 - 1, y - 1, 2.2, 2.2);
 
-      // Cross bridge every 3 points
-      if (i % 3 === 0) {
-        ctx.strokeStyle = `rgba(14, 165, 233, ${alpha * 0.6})`;
-        ctx.lineWidth = 0.6;
+      // Cross bridge every 2 points
+      if (i % 2 === 0) {
+        ctx.strokeStyle = `rgba(14, 165, 233, ${alpha * 0.75})`;
+        ctx.lineWidth = 0.8;
         ctx.beginPath();
         ctx.moveTo(x1, y);
         ctx.lineTo(x2, y);
@@ -431,10 +447,10 @@ function initCardOncoScanAnimation() {
 
       ctx.save();
       ctx.beginPath();
-      ctx.arc(px, py, 2, 0, Math.PI * 2);
+      ctx.arc(px, py, 2.5, 0, Math.PI * 2);
       ctx.fillStyle = p.color;
       ctx.shadowColor = p.color;
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = 10;
       ctx.fill();
       ctx.restore();
     }
@@ -496,23 +512,23 @@ function initCardQuantumPancreasAnimation() {
     constructor(index) {
       this.x = Math.random() * width;
       this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * 0.28;
-      this.vy = (Math.random() - 0.5) * 0.24;
-      this.radius = Math.random() * 1.5 + 1.2;
+      this.vx = (Math.random() - 0.5) * 0.44;
+      this.vy = (Math.random() - 0.5) * 0.38;
+      this.radius = Math.random() * 1.6 + 1.4;
       this.theme = palette[Math.floor(Math.random() * palette.length)];
-      this.hasOrbit = index % 3 === 0;
-      this.hasLabel = index % 3 === 0;
+      this.hasOrbit = index % 2 === 0;
+      this.hasLabel = index % 2 === 0;
       this.label = quantumSymbols[index % quantumSymbols.length];
       this.phase = Math.random() * Math.PI * 2;
-      this.phaseSpeed = Math.random() * 0.02 + 0.01;
+      this.phaseSpeed = Math.random() * 0.025 + 0.012;
       this.orbitAngle = Math.random() * Math.PI * 2;
-      this.orbitSpeed = (Math.random() - 0.5) * 0.025;
+      this.orbitSpeed = (Math.random() - 0.5) * 0.035;
     }
 
     update() {
       // Gentle sinusoidal float for living motion
-      const floatY = Math.sin(this.phase) * 0.12;
-      const floatX = Math.cos(this.phase * 0.8) * 0.10;
+      const floatY = Math.sin(this.phase) * 0.22;
+      const floatX = Math.cos(this.phase * 0.8) * 0.18;
       this.x += this.vx + floatX;
       this.y += this.vy + floatY;
       this.phase += this.phaseSpeed;
@@ -528,7 +544,7 @@ function initCardQuantumPancreasAnimation() {
         const dy = this.y - mouse.y;
         const dist = Math.hypot(dx, dy);
         if (dist < mouse.radius) {
-          const force = (1 - dist / mouse.radius) * 1.4;
+          const force = (1 - dist / mouse.radius) * 1.8;
           const angle = Math.atan2(dy, dx);
           this.x += Math.cos(angle) * force;
           this.y += Math.sin(angle) * force;
@@ -537,37 +553,37 @@ function initCardQuantumPancreasAnimation() {
     }
 
     draw() {
-      const pulse = Math.sin(this.phase) * 0.30 + 0.70;
+      const pulse = Math.sin(this.phase) * 0.35 + 0.65;
       ctx.save();
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.60})`;
+      ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.75})`;
       ctx.shadowColor = this.theme.color;
-      ctx.shadowBlur = 5;
+      ctx.shadowBlur = 7;
       ctx.fill();
 
       // Orbital satellite ring on key quantum states
       if (this.hasOrbit) {
-        ctx.strokeStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, 0.24)`;
-        ctx.lineWidth = 0.75;
+        ctx.strokeStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, 0.32)`;
+        ctx.lineWidth = 0.85;
         ctx.beginPath();
-        ctx.ellipse(this.x, this.y, 12, 6, this.orbitAngle, 0, Math.PI * 2);
+        ctx.ellipse(this.x, this.y, 13, 6.5, this.orbitAngle, 0, Math.PI * 2);
         ctx.stroke();
 
-        const satX = this.x + Math.cos(this.orbitAngle) * 12;
-        const satY = this.y + Math.sin(this.orbitAngle) * 6;
+        const satX = this.x + Math.cos(this.orbitAngle) * 13;
+        const satY = this.y + Math.sin(this.orbitAngle) * 6.5;
         ctx.beginPath();
-        ctx.arc(satX, satY, 1.2, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(34, 211, 238, 0.85)`;
+        ctx.arc(satX, satY, 1.5, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(34, 211, 238, 0.95)`;
         ctx.shadowColor = '#22d3ee';
-        ctx.shadowBlur = 4;
+        ctx.shadowBlur = 5;
         ctx.fill();
       }
 
       // Subtle, crisp quantum symbol label
       if (this.hasLabel) {
         ctx.font = '8.5px "JetBrains Mono", monospace';
-        ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.38})`;
+        ctx.fillStyle = `rgba(${this.theme.r}, ${this.theme.g}, ${this.theme.b}, ${pulse * 0.48})`;
         ctx.shadowBlur = 2;
         ctx.fillText(this.label, this.x + this.radius + 4, this.y + 3);
       }
@@ -581,36 +597,41 @@ function initCardQuantumPancreasAnimation() {
   function createParticles() {
     particles = [];
     photonPulses = [];
-    const count = Math.min(Math.max(Math.floor((width * height) / 16000), 12), 16);
+    const count = Math.min(Math.max(Math.floor((width * height) / 9500), 18), 26);
     for (let i = 0; i < count; i++) {
       particles.push(new QubitParticle(i));
     }
   }
 
-  // 4 Horizontal Quantum Wire Rails
+  // 4 Horizontal Quantum Wire Rails with dual zipping photons
   function drawQuantumRails() {
     ctx.save();
     const rails = [0.22, 0.42, 0.62, 0.82];
     for (let r = 0; r < rails.length; r++) {
       const y = height * rails[r];
-      ctx.strokeStyle = 'rgba(168, 85, 247, 0.08)';
-      ctx.lineWidth = 0.85;
-      ctx.setLineDash([4, 10]);
+      ctx.strokeStyle = 'rgba(168, 85, 247, 0.14)';
+      ctx.lineWidth = 0.9;
+      ctx.setLineDash([5, 9]);
       ctx.beginPath();
       ctx.moveTo(20, y);
       ctx.lineTo(width - 20, y);
       ctx.stroke();
       ctx.setLineDash([]);
 
-      // Traveling photon packet across rail
-      const speed = 0.007 + r * 0.0025;
-      const x = ((frame * speed * width) % (width - 40)) + 20;
-      ctx.beginPath();
-      ctx.arc(x, y, 1.8, 0, Math.PI * 2);
-      ctx.fillStyle = r % 2 === 0 ? 'rgba(34, 211, 238, 0.60)' : 'rgba(192, 132, 252, 0.60)';
-      ctx.shadowColor = r % 2 === 0 ? '#22d3ee' : '#c084fc';
-      ctx.shadowBlur = 6;
-      ctx.fill();
+      // Traveling photon packets across rail (2 per rail for lively continuous motion)
+      const speed = 0.009 + r * 0.003;
+      const x1 = ((frame * speed * width) % (width - 40)) + 20;
+      const x2 = (((frame * speed * width) + (width * 0.5)) % (width - 40)) + 20;
+
+      [x1, x2].forEach((x, idx) => {
+        ctx.beginPath();
+        ctx.arc(x, y, 2.0, 0, Math.PI * 2);
+        const col = (r + idx) % 2 === 0 ? 'rgba(34, 211, 238, 0.75)' : 'rgba(192, 132, 252, 0.75)';
+        ctx.fillStyle = col;
+        ctx.shadowColor = (r + idx) % 2 === 0 ? '#22d3ee' : '#c084fc';
+        ctx.shadowBlur = 7;
+        ctx.fill();
+      });
     }
     ctx.restore();
   }
@@ -618,29 +639,29 @@ function initCardQuantumPancreasAnimation() {
   // Undulating quantum probability wave at bottom of card
   function drawProbabilityWave() {
     ctx.save();
-    const time = frame * 0.014;
+    const time = frame * 0.016;
     const waveY = height - 24;
     ctx.beginPath();
     ctx.moveTo(0, waveY);
 
-    for (let x = 0; x <= width; x += 10) {
-      const y = waveY + Math.sin(time + x * 0.018) * 4.5 + Math.cos(time * 0.8 + x * 0.012) * 2.5;
+    for (let x = 0; x <= width; x += 8) {
+      const y = waveY + Math.sin(time + x * 0.018) * 6 + Math.cos(time * 0.8 + x * 0.012) * 3;
       ctx.lineTo(x, y);
     }
 
     const grad = ctx.createLinearGradient(0, 0, width, 0);
-    grad.addColorStop(0, 'rgba(168, 85, 247, 0.02)');
-    grad.addColorStop(0.5, 'rgba(34, 211, 238, 0.18)');
-    grad.addColorStop(1, 'rgba(129, 140, 248, 0.02)');
+    grad.addColorStop(0, 'rgba(168, 85, 247, 0.04)');
+    grad.addColorStop(0.5, 'rgba(34, 211, 238, 0.28)');
+    grad.addColorStop(1, 'rgba(129, 140, 248, 0.04)');
 
     ctx.strokeStyle = grad;
-    ctx.lineWidth = 1.2;
+    ctx.lineWidth = 1.6;
     ctx.stroke();
     ctx.restore();
   }
 
   function drawConnections() {
-    const maxDist = 88;
+    const maxDist = 104;
     for (let i = 0; i < particles.length; i++) {
       for (let j = i + 1; j < particles.length; j++) {
         const p1 = particles[i];
@@ -650,20 +671,20 @@ function initCardQuantumPancreasAnimation() {
         const dist = Math.hypot(dx, dy);
 
         if (dist < maxDist) {
-          const alpha = (1 - dist / maxDist) * 0.16;
+          const alpha = (1 - dist / maxDist) * 0.24;
           ctx.strokeStyle = `rgba(${p1.theme.r}, ${p1.theme.g}, ${p1.theme.b}, ${alpha})`;
-          ctx.lineWidth = 0.85;
+          ctx.lineWidth = 0.95;
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
 
-          if (frame % 28 === 0 && Math.random() < 0.20 && photonPulses.length < 5) {
+          if (frame % 16 === 0 && Math.random() < 0.35 && photonPulses.length < 8) {
             photonPulses.push({
               p1Index: i,
               p2Index: j,
               prog: 0,
-              spd: 0.016 + Math.random() * 0.015,
+              spd: 0.020 + Math.random() * 0.018,
               color: p1.theme.color
             });
           }

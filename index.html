@@ -462,52 +462,52 @@
       pointer-events: none;
       z-index: 0;
       border-radius: inherit;
-      opacity: 0.45;
+      opacity: 0.55;
       transition: opacity 0.5s ease;
     }
 
     .platform-card:hover .card-interior-ambient {
-      opacity: 0.70;
+      opacity: 0.80;
     }
 
     @keyframes cardMeshPulse1 {
       0%, 100% {
         transform: scale(1) rotate(0deg);
-        opacity: 0.45;
+        opacity: 0.50;
       }
       50% {
-        transform: scale(1.08) rotate(8deg);
-        opacity: 0.68;
+        transform: scale(1.10) rotate(9deg);
+        opacity: 0.78;
       }
     }
 
     @keyframes cardMeshPulse2 {
       0%, 100% {
         transform: scale(1) rotate(0deg);
-        opacity: 0.45;
+        opacity: 0.50;
       }
       50% {
-        transform: scale(1.08) rotate(-8deg);
-        opacity: 0.68;
+        transform: scale(1.10) rotate(-9deg);
+        opacity: 0.78;
       }
     }
 
     .card-mesh-oncoscan {
       background: 
-        radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.18) 0%, transparent 55%),
-        radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 50% 90%, rgba(99, 102, 241, 0.14) 0%, transparent 60%);
+        radial-gradient(circle at 15% 15%, rgba(14, 165, 233, 0.22) 0%, transparent 55%),
+        radial-gradient(circle at 85% 75%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 90%, rgba(99, 102, 241, 0.16) 0%, transparent 60%);
       filter: blur(28px);
-      animation: cardMeshPulse1 20s ease-in-out infinite alternate;
+      animation: cardMeshPulse1 14s ease-in-out infinite alternate;
     }
 
     .card-mesh-qml {
       background: 
-        radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.20) 0%, transparent 55%),
-        radial-gradient(circle at 15% 75%, rgba(6, 182, 212, 0.16) 0%, transparent 50%),
-        radial-gradient(circle at 50% 85%, rgba(129, 140, 248, 0.14) 0%, transparent 60%);
+        radial-gradient(circle at 85% 15%, rgba(168, 85, 247, 0.24) 0%, transparent 55%),
+        radial-gradient(circle at 15% 75%, rgba(6, 182, 212, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 50% 85%, rgba(129, 140, 248, 0.16) 0%, transparent 60%);
       filter: blur(28px);
-      animation: cardMeshPulse2 22s ease-in-out infinite alternate;
+      animation: cardMeshPulse2 16s ease-in-out infinite alternate;
     }
 
     /* Card Interior Dedicated 60fps Canvases */
@@ -526,7 +526,7 @@
       position: absolute;
       left: 0;
       right: 0;
-      height: 2px;
+      height: 2.5px;
       pointer-events: none;
       z-index: 1;
       opacity: 0;
@@ -538,10 +538,10 @@
         opacity: 0;
       }
       15% {
-        opacity: 0.48;
+        opacity: 0.65;
       }
       80% {
-        opacity: 0.48;
+        opacity: 0.65;
       }
       100% {
         top: 100%;
@@ -550,15 +550,15 @@
     }
 
     .beam-oncoscan {
-      background: linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.55) 50%, transparent 100%);
-      box-shadow: 0 0 8px rgba(34, 211, 238, 0.35);
-      animation: scanBeamMove 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+      background: linear-gradient(90deg, transparent 0%, rgba(34, 211, 238, 0.75) 50%, transparent 100%);
+      box-shadow: 0 0 12px rgba(34, 211, 238, 0.5);
+      animation: scanBeamMove 6.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
     .beam-qml {
-      background: linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.55) 40%, rgba(34, 211, 238, 0.55) 60%, transparent 100%);
-      box-shadow: 0 0 8px rgba(168, 85, 247, 0.35);
-      animation: scanBeamMove 12s cubic-bezier(0.4, 0, 0.2, 1) infinite 3s;
+      background: linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.75) 40%, rgba(34, 211, 238, 0.75) 60%, transparent 100%);
+      box-shadow: 0 0 12px rgba(168, 85, 247, 0.5);
+      animation: scanBeamMove 7.5s cubic-bezier(0.4, 0, 0.2, 1) infinite 2s;
     }
 
     /* Live Telemetry Dot inside Badges */
