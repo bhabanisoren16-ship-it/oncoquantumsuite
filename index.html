@@ -55,8 +55,8 @@
       --transition-smooth: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Instant Cursor Suppression for Fine Pointers (prevents normal OS cursor flicker on page open) */
-    @media (any-pointer: fine), (pointer: fine) {
+    /* Instant Cursor Suppression for Desktop Screens Only (prevents normal OS cursor flicker on desktop) */
+    @media (min-width: 769px) {
       html, body, *, *::before, *::after {
         cursor: none !important;
       }
@@ -967,6 +967,10 @@
       width: 39%;
     }
 
+    .scroll-hint-pill {
+      display: none;
+    }
+
     /* ==========================================================================
        EXAMINER QUICK DEMO STRIP
        ========================================================================== */
@@ -1174,6 +1178,189 @@
       border-top-color: var(--cyan-400);
       border-radius: 50%;
       animation: spin-clockwise 0.8s linear infinite;
+    }
+
+    /* ==========================================================================
+       MOBILE VIEW ANIMATION REMOVAL (Clean, high-performance static mobile layout)
+       ========================================================================== */
+    @media (max-width: 768px) {
+      /* Completely hide background and card animated canvases and beams on mobile */
+      #quantum-bg-canvas,
+      .quantum-canvas,
+      #canvas-card-oncoscan,
+      #canvas-card-qml,
+      .card-interior-canvas,
+      .card-scanner-beam,
+      .beam-oncoscan,
+      .beam-qml,
+      .ambient-shimmer-beam,
+      .ambient-orb,
+      .ambient-orb-cyan,
+      .ambient-orb-violet,
+      .ambient-orb-center,
+      #quantum-cursor-dot,
+      #quantum-cursor-ring,
+      .q-cursor-dot,
+      .q-cursor-ring {
+        display: none !important;
+        animation: none !important;
+        visibility: hidden !important;
+      }
+
+      /* Disable all continuous background and card ambient animations on mobile */
+      .ambient-background,
+      .ambient-grid,
+      .card-interior-ambient,
+      .card-mesh-oncoscan,
+      .card-mesh-qml,
+      .card-live-dot,
+      .dot-genomic,
+      .dot-quantum,
+      .status-dot.online::after,
+      .card-icon-box {
+        animation: none !important;
+        transform: none !important;
+      }
+
+      /* Clean, static, performant card interior for mobile screens */
+      .card-interior-ambient {
+        opacity: 0.35 !important;
+        filter: none !important;
+      }
+
+      .ambient-background {
+        filter: blur(40px) !important;
+      }
+
+      /* Disable hover elevation on touch screens to prevent stuck hover states */
+      .platform-card:hover {
+        transform: none !important;
+      }
+
+      /* Portal Container Mobile Spacing */
+      .portal-container {
+        padding: 16px 14px 48px !important;
+        gap: 24px !important;
+      }
+
+      /* Technical & Clinical Architecture Comparison Mobile Polish */
+      .comparison-section {
+        padding: 20px 14px !important;
+        border-radius: var(--radius-md) !important;
+      }
+
+      .comparison-section .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 14px;
+        padding-bottom: 12px;
+      }
+
+      .comparison-section .section-title-group h3 {
+        font-size: 1.05rem;
+        flex-wrap: wrap;
+        gap: 8px;
+        line-height: 1.35;
+      }
+
+      .comparison-section .section-subtitle {
+        font-size: 0.76rem;
+        line-height: 1.45;
+        margin-top: 4px;
+        color: var(--text-secondary);
+      }
+
+      .scroll-hint-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: var(--radius-full);
+        background: rgba(34, 211, 238, 0.09);
+        border: 1px solid rgba(34, 211, 238, 0.25);
+        color: var(--cyan-400);
+        font-size: 0.68rem;
+        font-family: var(--font-mono);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .comparison-table-wrapper {
+        border-radius: var(--radius-sm);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(7, 11, 22, 0.6);
+        -webkit-overflow-scrolling: touch;
+        overflow-x: auto;
+      }
+
+      .comparison-table-wrapper::-webkit-scrollbar {
+        height: 4px;
+      }
+      .comparison-table-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(34, 211, 238, 0.25);
+        border-radius: 4px;
+      }
+
+      .comparison-table {
+        min-width: 580px;
+        font-size: 0.78rem;
+      }
+
+      .comparison-table th {
+        padding: 10px 12px;
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+      }
+
+      .comparison-table td {
+        padding: 11px 12px;
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      /* Sticky Parameter Column on Mobile for clear row tracking while swiping */
+      .comparison-table th:first-child,
+      .comparison-table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: #070d1a;
+        box-shadow: 3px 0 10px -2px rgba(0, 0, 0, 0.7);
+        width: 135px;
+        min-width: 125px;
+        max-width: 145px;
+      }
+
+      .comparison-table thead th:first-child {
+        z-index: 3;
+        background: #091122;
+      }
+
+      .comparison-table th:nth-child(2) {
+        border-left: 1px solid rgba(14, 165, 233, 0.2);
+        background: rgba(14, 165, 233, 0.07);
+        color: var(--sky-400);
+      }
+
+      .comparison-table td:nth-child(2) {
+        border-left: 1px solid rgba(14, 165, 233, 0.08);
+      }
+
+      .comparison-table th:nth-child(3) {
+        border-left: 1px solid rgba(168, 85, 247, 0.2);
+        background: rgba(168, 85, 247, 0.07);
+        color: var(--violet-400);
+      }
+
+      .comparison-table td:nth-child(3) {
+        border-left: 1px solid rgba(168, 85, 247, 0.08);
+      }
+
+      .comparison-table tbody tr:nth-child(even) td:not(:first-child) {
+        background: rgba(255, 255, 255, 0.015);
+      }
     }
   </style>
 </head>
@@ -1476,6 +1663,11 @@
             <span>Technical & Clinical Architecture Comparison</span>
           </h3>
           <p class="section-subtitle">Side-by-side evaluation of detection modalities, clinical targets, and algorithmic foundations</p>
+        </div>
+        <div class="scroll-hint-pill" aria-hidden="true">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Swipe to compare</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </div>
       </div>
 

@@ -38,10 +38,27 @@ function initQuantumGenomicBackground() {
     { r: 251, g: 113, b: 133, color: '#fb7185' } // Rose (Oncogenic Mutation / BRCA)
   ];
 
+  let animId = null;
+  let isRunning = false;
+
   function resize() {
+    if (window.innerWidth <= 768) {
+      canvas.style.display = 'none';
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      isRunning = false;
+      return;
+    }
+    canvas.style.display = '';
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
     createParticles();
+    if (!isRunning) {
+      isRunning = true;
+      animId = requestAnimationFrame(animate);
+    }
   }
 
   class QuantumParticle {
@@ -217,11 +234,16 @@ function initQuantumGenomicBackground() {
       particles[i].update();
       particles[i].draw();
     }
-    requestAnimationFrame(animate);
+    if (window.innerWidth <= 768) {
+      isRunning = false;
+      return;
+    }
+    animId = requestAnimationFrame(animate);
   }
 
   window.addEventListener('resize', resize);
   window.addEventListener('mousemove', (e) => {
+    if (window.innerWidth <= 768) return;
     mouse.x = e.clientX;
     mouse.y = e.clientY;
   });
@@ -230,8 +252,11 @@ function initQuantumGenomicBackground() {
     mouse.y = null;
   });
 
-  resize();
-  animate();
+  if (window.innerWidth <= 768) {
+    canvas.style.display = 'none';
+  } else {
+    resize();
+  }
 }
 
 /* ==========================================================================
@@ -261,10 +286,27 @@ function initCardOncoScanAnimation() {
     { r: 251, g: 113, b: 133, color: '#fb7185' } // Rose
   ];
 
+  let animId = null;
+  let isRunning = false;
+
   function resize() {
+    if (window.innerWidth <= 768) {
+      canvas.style.display = 'none';
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      isRunning = false;
+      return;
+    }
+    canvas.style.display = '';
     width = canvas.width = parent.clientWidth;
     height = canvas.height = parent.clientHeight;
     createParticles();
+    if (!isRunning) {
+      isRunning = true;
+      animId = requestAnimationFrame(animate);
+    }
   }
 
   class GeneNode {
@@ -460,10 +502,15 @@ function initCardOncoScanAnimation() {
       particles[i].draw();
     }
 
-    requestAnimationFrame(animate);
+    if (window.innerWidth <= 768) {
+      isRunning = false;
+      return;
+    }
+    animId = requestAnimationFrame(animate);
   }
 
   parent.addEventListener('mousemove', (e) => {
+    if (window.innerWidth <= 768) return;
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
     mouse.y = e.clientY - rect.top;
@@ -475,8 +522,11 @@ function initCardOncoScanAnimation() {
   });
 
   window.addEventListener('resize', resize);
-  resize();
-  animate();
+  if (window.innerWidth <= 768) {
+    canvas.style.display = 'none';
+  } else {
+    resize();
+  }
 }
 
 /**
@@ -502,10 +552,27 @@ function initCardQuantumPancreasAnimation() {
     { r: 232, g: 121, b: 249, color: '#e879f9' }  // Fuchsia
   ];
 
+  let animId = null;
+  let isRunning = false;
+
   function resize() {
+    if (window.innerWidth <= 768) {
+      canvas.style.display = 'none';
+      if (animId) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      isRunning = false;
+      return;
+    }
+    canvas.style.display = '';
     width = canvas.width = parent.clientWidth;
     height = canvas.height = parent.clientHeight;
     createParticles();
+    if (!isRunning) {
+      isRunning = true;
+      animId = requestAnimationFrame(animate);
+    }
   }
 
   class QubitParticle {
@@ -728,10 +795,15 @@ function initCardQuantumPancreasAnimation() {
       particles[i].draw();
     }
 
-    requestAnimationFrame(animate);
+    if (window.innerWidth <= 768) {
+      isRunning = false;
+      return;
+    }
+    animId = requestAnimationFrame(animate);
   }
 
   parent.addEventListener('mousemove', (e) => {
+    if (window.innerWidth <= 768) return;
     const rect = canvas.getBoundingClientRect();
     mouse.x = e.clientX - rect.left;
     mouse.y = e.clientY - rect.top;
@@ -743,14 +815,19 @@ function initCardQuantumPancreasAnimation() {
   });
 
   window.addEventListener('resize', resize);
-  resize();
-  animate();
+  if (window.innerWidth <= 768) {
+    canvas.style.display = 'none';
+  } else {
+    resize();
+  }
 }
 
 /* ==========================================================================
    PART 2: SIMPLE & SLEEK CLINICAL CURSOR ENGINE
    ========================================================================== */
 function initQuantumCursor() {
+  // Completely disable custom cursor on mobile screens
+  if (window.innerWidth <= 768) return;
   // Enable on any device with fine pointer accuracy (mouse, trackpad)
   const hasPointer = window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches;
   if (!hasPointer) return;
@@ -764,7 +841,7 @@ function initQuantumCursor() {
   const style = document.createElement('style');
   style.id = 'quantum-cursor-styles';
   style.textContent = `
-    @media (any-pointer: fine), (pointer: fine) {
+    @media (min-width: 769px) {
       html, body, *, *::before, *::after {
         cursor: none !important;
       }
@@ -921,9 +998,20 @@ function initQuantumCursor() {
     }
   });
 
+  window.addEventListener('resize', () => {
+    if (window.innerWidth <= 768) {
+      dot.style.display = 'none';
+      ring.style.display = 'none';
+      isVisible = false;
+    } else {
+      dot.style.display = 'block';
+      ring.style.display = 'block';
+    }
+  });
+
   // Smooth Ring Follow Loop (Fluid Lerp)
   function renderCursor() {
-    if (isVisible) {
+    if (isVisible && window.innerWidth > 768) {
       ringX += (mouseX - ringX) * 0.16;
       ringY += (mouseY - ringY) * 0.16;
       ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;

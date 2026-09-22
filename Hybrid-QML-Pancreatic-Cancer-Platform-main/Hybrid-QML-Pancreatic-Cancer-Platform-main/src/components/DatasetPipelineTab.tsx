@@ -6,9 +6,10 @@ import { PCA_EXPLAINED_VARIANCE, projectTo4Qubits } from "../utils/qmlSimulator"
 
 interface DatasetPipelineTabProps {
   dataset: PatientRecord[];
+  onSelectPatient?: (patient: PatientRecord) => void;
 }
 
-export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset }) => {
+export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset, onSelectPatient }) => {
   const [filterDiag, setFilterDiag] = useState<string>("all");
   const [selectedBiomarker, setSelectedBiomarker] = useState<string>("lyve1");
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -374,6 +375,7 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                 <th className="px-4 py-3">TFF1 (ng/mL)</th>
                 <th className="px-4 py-3">CA 19-9 (U/mL)</th>
                 <th className="px-4 py-3">Pathology Status</th>
+                {onSelectPatient && <th className="px-4 py-3 text-right">Action</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 font-mono">
@@ -401,6 +403,17 @@ export const DatasetPipelineTab: React.FC<DatasetPipelineTabProps> = ({ dataset 
                       </span>
                     )}
                   </td>
+                  {onSelectPatient && (
+                    <td className="px-4 py-2.5 text-right font-sans">
+                      <button
+                        onClick={() => onSelectPatient(p)}
+                        className="px-2 py-1 rounded text-[11px] font-medium bg-cyan-950/80 hover:bg-cyan-900 text-cyan-300 border border-cyan-700/60 hover:border-cyan-500 transition"
+                        title="Load patient biomarkers into Patient Inference & AI tab"
+                      >
+                        Load into Inference &rarr;
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

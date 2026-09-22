@@ -155,13 +155,13 @@
         // 1. Inject Stylesheet without CORS requirement
         var cssLink = document.createElement('link');
         cssLink.rel = 'stylesheet';
-        cssLink.href = assetPrefix + 'index-DAm3ploo.css';
+        cssLink.href = assetPrefix + 'index-CrNYA0B-.css';
         cssLink.onerror = function() {
           // Fallback to relative path if absolute failed
-          if (cssLink.href !== './assets/index-DAm3ploo.css') {
+          if (cssLink.href !== './assets/index-CrNYA0B-.css') {
             var fb = document.createElement('link');
             fb.rel = 'stylesheet';
-            fb.href = './assets/index-DAm3ploo.css';
+            fb.href = './assets/index-CrNYA0B-.css';
             document.head.appendChild(fb);
           }
         };
@@ -170,13 +170,13 @@
         // 2. Inject Script with classic defer (runs on file:// without CORS rejection & on all servers)
         var appScript = document.createElement('script');
         appScript.defer = true;
-        appScript.src = assetPrefix + 'index-CpjZIDwN.js';
+        appScript.src = assetPrefix + 'index-CjiOpRTj.js';
         appScript.onerror = function() {
           // Fallback to relative path if absolute failed
-          if (appScript.src !== './assets/index-CpjZIDwN.js') {
+          if (appScript.src !== './assets/index-CjiOpRTj.js') {
             var fb = document.createElement('script');
             fb.defer = true;
-            fb.src = './assets/index-CpjZIDwN.js';
+            fb.src = './assets/index-CjiOpRTj.js';
             document.head.appendChild(fb);
           }
         };

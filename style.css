@@ -3,8 +3,8 @@
    Aesthetic: Minimalist Obsidian & Surgical Cobalt / Multi-Cancer Semantics
    ========================================================================== */
 
-/* Universal Cursor Suppression for Fine Pointers (prevents normal OS cursor flicker on page open) */
-@media (any-pointer: fine), (pointer: fine) {
+/* Universal Cursor Suppression on Desktop Screens Only (min-width: 769px) */
+@media (min-width: 769px) {
   html, body, *, *::before, *::after {
     cursor: none !important;
   }
@@ -1976,4 +1976,45 @@ span[id*="time"] {
   border: 1px solid rgba(14, 165, 233, 0.35);
 }
 .boot-pill.pill-kras .boot-dot { background: #0ea5e9; }
+
+/* ==========================================================================
+   MOBILE VIEW ANIMATION REMOVAL (Clean, high-performance static mobile view)
+   ========================================================================== */
+@media (max-width: 768px) {
+  #quantum-bg-canvas,
+  .quantum-canvas,
+  #canvas-card-oncoscan,
+  #canvas-card-qml,
+  .card-interior-canvas,
+  .card-scanner-beam,
+  .beam-oncoscan,
+  .beam-qml,
+  .ambient-shimmer-beam,
+  .ambient-orb,
+  .ambient-orb-cyan,
+  .ambient-orb-violet,
+  .ambient-orb-center,
+  #quantum-cursor-dot,
+  #quantum-cursor-ring,
+  .q-cursor-dot,
+  .q-cursor-ring {
+    display: none !important;
+    animation: none !important;
+    visibility: hidden !important;
+  }
+
+  .ambient-background,
+  .ambient-grid,
+  .pulse-glow,
+  .card-interior-ambient,
+  .status-dot.online::after {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .ambient-background {
+    filter: blur(40px) !important;
+  }
+}
+
 

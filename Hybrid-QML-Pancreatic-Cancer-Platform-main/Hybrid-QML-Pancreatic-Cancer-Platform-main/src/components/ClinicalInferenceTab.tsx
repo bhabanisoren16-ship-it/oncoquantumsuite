@@ -6,11 +6,34 @@ import { Stethoscope, Sparkles, User, AlertTriangle, ShieldCheck, CheckCircle2, 
 interface ClinicalInferenceTabProps {
   threshold: number;
   setThreshold: (t: number) => void;
+  patient?: Partial<PatientRecord>;
+  setPatient?: React.Dispatch<React.SetStateAction<Partial<PatientRecord>>>;
+  geminiReport?: string | null;
+  setGeminiReport?: (report: string | null) => void;
+  reportSource?: string;
+  setReportSource?: (source: string) => void;
+  reportNotice?: string | null;
+  setReportNotice?: (notice: string | null) => void;
+  isLoadingGemini?: boolean;
+  setIsLoadingGemini?: (loading: boolean) => void;
 }
 
-export const ClinicalInferenceTab: React.FC<ClinicalInferenceTabProps> = ({ threshold, setThreshold }) => {
-  // Patient state
-  const [patient, setPatient] = useState<Partial<PatientRecord>>({
+export const ClinicalInferenceTab: React.FC<ClinicalInferenceTabProps> = ({
+  threshold,
+  setThreshold,
+  patient: propPatient,
+  setPatient: propSetPatient,
+  geminiReport: propGeminiReport,
+  setGeminiReport: propSetGeminiReport,
+  reportSource: propReportSource,
+  setReportSource: propSetReportSource,
+  reportNotice: propReportNotice,
+  setReportNotice: propSetReportNotice,
+  isLoadingGemini: propIsLoadingGemini,
+  setIsLoadingGemini: propSetIsLoadingGemini,
+}) => {
+  // Patient state (either lifted from App to persist across tab switches or internal fallback)
+  const [internalPatient, setInternalPatient] = useState<Partial<PatientRecord>>({
     patient_id: "PAT-CLINICAL-LIVE",
     age: 66,
     sex: 1, // Male
@@ -21,10 +44,22 @@ export const ClinicalInferenceTab: React.FC<ClinicalInferenceTabProps> = ({ thre
     plasma_ca19_9: 68.0,
   });
 
-  const [isLoadingGemini, setIsLoadingGemini] = useState<boolean>(false);
-  const [geminiReport, setGeminiReport] = useState<string | null>(null);
-  const [reportSource, setReportSource] = useState<string>("gemini-3.8-flash");
-  const [reportNotice, setReportNotice] = useState<string | null>(null);
+  const patient = propPatient ?? internalPatient;
+  const setPatient = propSetPatient ?? setInternalPatient;
+
+  const [internalLoadingGemini, setInternalLoadingGemini] = useState<boolean>(false);
+  const [internalGeminiReport, setInternalGeminiReport] = useState<string | null>(null);
+  const [internalReportSource, setInternalReportSource] = useState<string>("gemini-3.8-flash");
+  const [internalReportNotice, setInternalReportNotice] = useState<string | null>(null);
+
+  const isLoadingGemini = propIsLoadingGemini ?? internalLoadingGemini;
+  const setIsLoadingGemini = propSetIsLoadingGemini ?? setInternalLoadingGemini;
+  const geminiReport = propGeminiReport !== undefined ? propGeminiReport : internalGeminiReport;
+  const setGeminiReport = propSetGeminiReport ?? setInternalGeminiReport;
+  const reportSource = propReportSource ?? internalReportSource;
+  const setReportSource = propSetReportSource ?? setInternalReportSource;
+  const reportNotice = propReportNotice !== undefined ? propReportNotice : internalReportNotice;
+  const setReportNotice = propSetReportNotice ?? setInternalReportNotice;
 
   // Calculate live quantum inference
   const qAngles = projectTo4Qubits(patient);
@@ -49,8 +84,19 @@ export const ClinicalInferenceTab: React.FC<ClinicalInferenceTabProps> = ({ thre
   }
 
   // Archetypes
-  const loadArchetype = (type: "healthy" | "benign" | "early_pdac" | "lewis_neg") => {
-    if (type === "healthy") {
+  const loadArchetype = (type: "healthy" | "benign" | "early_pdac" | "lewis_neg" | "default") => {
+    if (type === "default") {
+      setPatient({
+        patient_id: "PAT-CLINICAL-LIVE",
+        age: 66,
+        sex: 1,
+        creatinine: 1.15,
+        lyve1: 4.85,
+        reg1b: 380.0,
+        tff1: 520.0,
+        plasma_ca19_9: 68.0,
+      });
+    } else if (type === "healthy") {
       setPatient({
         patient_id: "PAT-SAMPLE-HEALTHY",
         age: 52,
@@ -198,6 +244,13 @@ Urgent Oncology Pathway:
           {/* Quick Archetype Loaders */}
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-xs text-slate-400 font-mono">Load Archetype:</span>
+            <button
+              onClick={() => loadArchetype("default")}
+              className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-950 hover:bg-slate-800 text-slate-300 border border-slate-800 transition"
+              title="Reset patient assay to standard baseline values"
+            >
+              Default Baseline
+            </button>
             <button
               onClick={() => loadArchetype("healthy")}
               className="px-2.5 py-1.5 rounded-lg text-xs font-medium bg-slate-950 hover:bg-slate-800 text-emerald-400 border border-slate-800 transition"

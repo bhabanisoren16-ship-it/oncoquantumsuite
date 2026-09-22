@@ -26,6 +26,17 @@ const INITIAL_FALLBACK_PATIENTS: PatientRecord[] = Array.from({ length: 60 }, (_
   };
 });
 
+const DEFAULT_PATIENT: Partial<PatientRecord> = {
+  patient_id: "PAT-CLINICAL-LIVE",
+  age: 66,
+  sex: 1, // Male
+  creatinine: 1.15,
+  lyve1: 4.85,
+  reg1b: 380.0,
+  tff1: 520.0,
+  plasma_ca19_9: 68.0,
+};
+
 export default function App() {
   const [activeTab, setActiveTab] = useState<string>("inference");
   const [threshold, setThreshold] = useState<number>(0.45);
@@ -33,6 +44,71 @@ export default function App() {
   const [benchmarks, setBenchmarks] = useState<ModelBenchmark[]>(() =>
     computeBenchmarks(INITIAL_FALLBACK_PATIENTS, 0.45)
   );
+
+  // Persistent patient biomarker input data:
+  // Switching between "Patient Inference & AI" and "Model Benchmarks" will NOT reset or alter user inputs or localhost payloads
+  const [patient, setPatient] = useState<Partial<PatientRecord>>(() => {
+    try {
+      const saved = localStorage.getItem("oncoquantum_patient_input");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === "object" && typeof parsed.age === "number") {
+          return parsed;
+        }
+      }
+    } catch (e) {
+      console.warn("Could not retrieve saved patient inputs from localStorage:", e);
+    }
+    return DEFAULT_PATIENT;
+  });
+
+  const [isLoadingGemini, setIsLoadingGemini] = useState<boolean>(false);
+  const [geminiReport, setGeminiReport] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("oncoquantum_gemini_report") || null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [reportSource, setReportSource] = useState<string>(() => {
+    try {
+      return localStorage.getItem("oncoquantum_report_source") || "gemini-3.8-flash";
+    } catch (e) {
+      return "gemini-3.8-flash";
+    }
+  });
+  const [reportNotice, setReportNotice] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem("oncoquantum_report_notice") || null;
+    } catch (e) {
+      return null;
+    }
+  });
+
+  // Persist patient input changes to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("oncoquantum_patient_input", JSON.stringify(patient));
+    } catch (e) {}
+  }, [patient]);
+
+  // Persist report data to localStorage
+  useEffect(() => {
+    try {
+      if (geminiReport) {
+        localStorage.setItem("oncoquantum_gemini_report", geminiReport);
+        localStorage.setItem("oncoquantum_report_source", reportSource);
+        if (reportNotice) {
+          localStorage.setItem("oncoquantum_report_notice", reportNotice);
+        } else {
+          localStorage.removeItem("oncoquantum_report_notice");
+        }
+      } else {
+        localStorage.removeItem("oncoquantum_gemini_report");
+        localStorage.removeItem("oncoquantum_report_notice");
+      }
+    } catch (e) {}
+  }, [geminiReport, reportSource, reportNotice]);
 
   // Fetch full 220 records from backend CSV endpoint
   useEffect(() => {
@@ -67,14 +143,36 @@ export default function App() {
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 relative z-10">
-        {activeTab === "inference" && (
-          <ClinicalInferenceTab threshold={threshold} setThreshold={setThreshold} />
-        )}
+        {/* Patient Inference Tab is kept mounted with display styling so inputs, focus, and localhost payloads are never lost */}
+        <div style={{ display: activeTab === "inference" ? "block" : "none" }}>
+          <ClinicalInferenceTab
+            threshold={threshold}
+            setThreshold={setThreshold}
+            patient={patient}
+            setPatient={setPatient}
+            geminiReport={geminiReport}
+            setGeminiReport={setGeminiReport}
+            reportSource={reportSource}
+            setReportSource={setReportSource}
+            reportNotice={reportNotice}
+            setReportNotice={setReportNotice}
+            isLoadingGemini={isLoadingGemini}
+            setIsLoadingGemini={setIsLoadingGemini}
+          />
+        </div>
         {activeTab === "benchmark" && (
           <BenchmarkLabTab benchmarks={benchmarks} threshold={threshold} setThreshold={setThreshold} />
         )}
         {activeTab === "quantum" && <QuantumArchitectureTab />}
-        {activeTab === "dataset" && <DatasetPipelineTab dataset={dataset} />}
+        {activeTab === "dataset" && (
+          <DatasetPipelineTab
+            dataset={dataset}
+            onSelectPatient={(selectedRecord) => {
+              setPatient(selectedRecord);
+              setActiveTab("inference");
+            }}
+          />
+        )}
       </main>
 
       {/* Scientific Reference Footer */}
