@@ -17,6 +17,8 @@ pause
 echo.
 echo [Step 2 of 3] Pushing codebase to github.com/bhabanisoren16-ship-it/oncoquantumsuite...
 set "PATH=C:\Program Files\Git\cmd;C:\Program Files\nodejs;%PATH%"
+git add -A
+git commit -m "Update site deployment" >nul 2>&1
 git push -u origin main
 if %ERRORLEVEL% NEQ 0 (
     echo.
