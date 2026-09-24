@@ -210,7 +210,7 @@ def main():
             <span class="badge-pill badge-quantum">⚛️ 4-Qubit Variational QNN</span>
             <span class="badge-pill badge-tcga">🧬 TCGA Multi-Cohort Precision Oncology</span>
             <span class="badge-pill" style="background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3);">
-                SIH26139 Challenge Solution
+                Precision Oncology Solution
             </span>
         </div>
         <h1 style="font-weight: 700; margin: 0; font-size: 2.2rem; letter-spacing: -0.02em; background: linear-gradient(90deg, #ffffff, #c7d2fe, #818cf8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
@@ -644,7 +644,7 @@ def main():
     # ==========================================
     st.markdown("---")
     report_content = f"""================================================================================
-HQML-ONCODETECT CLINICAL GENOMIC DIAGNOSTIC REPORT (SIH26139)
+HQML-ONCODETECT CLINICAL GENOMIC DIAGNOSTIC REPORT
 ================================================================================
 Date/Time: {time.strftime('%Y-%m-%d %H:%M:%S')}
 Patient ID: {patient_id}
