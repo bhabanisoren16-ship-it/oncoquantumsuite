@@ -187,6 +187,21 @@ Write clearly in clean plain text suitable for clinical oncology review. Do NOT 
   }
 });
 
+// Receive typed patient biomarker data on localhost
+app.post("/api/patient-inference", (req, res) => {
+  const { patientData, qmlProb, threshold, riskTier } = req.body;
+  console.log(`[Localhost Server:3000] Received typed patient biomarker payload for ${patientData?.patient_id || 'PATIENT'}:`, patientData);
+  return res.json({
+    success: true,
+    message: "Patient biomarker data received and logged by localhost server",
+    receivedAt: new Date().toISOString(),
+    patientId: patientData?.patient_id || 'PATIENT-LIVE',
+    qmlProb,
+    threshold,
+    riskTier
+  });
+});
+
 // Serve Python project files for live review and download
 app.get("/api/files/:filename", (req, res) => {
   const allowedFiles = ["app.py", "requirements.txt", "setup_guide.md", "generate_data.py", "debernardi_dataset.csv"];

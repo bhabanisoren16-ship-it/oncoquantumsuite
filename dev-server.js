@@ -97,6 +97,30 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  // 2b. API: /api/patient-inference (Accepts typed patient biomarker data on localhost)
+  if (pathname === '/api/patient-inference') {
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      try {
+        const payload = body ? JSON.parse(body) : {};
+        console.log(`[Localhost API] Received typed patient biomarker payload for ${payload?.patientData?.patient_id || 'PATIENT'}:`, payload?.patientData);
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          success: true,
+          message: "Patient biomarker data received and logged on localhost server",
+          receivedAt: new Date().toISOString(),
+          patientId: payload?.patientData?.patient_id || 'PATIENT-LIVE',
+          data: payload
+        }));
+      } catch (e) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: e.message }));
+      }
+    });
+    return;
+  }
+
   // 3. Routing & Rewrites
   // / -> index.html
   if (pathname === '/' || pathname === '') {
