@@ -2226,10 +2226,11 @@
 
         <button class="refresh-status-btn" id="btn-header-comparison" onclick="toggleComparisonSection()" title="View Architecture Comparison">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--cyan-400);">
-            <rect x="2" y="3" width="8" height="18" rx="2"></rect>
-            <rect x="14" y="3" width="8" height="18" rx="2"></rect>
-            <line x1="6" y1="8" x2="6" y2="8.01"></line>
-            <line x1="18" y1="8" x2="18" y2="8.01"></line>
+            <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+            <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+            <path d="M7 21h10"></path>
+            <path d="M12 3v18"></path>
+            <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path>
           </svg>
           <span>Compare Platforms</span>
         </button>
@@ -2323,12 +2324,13 @@
           <a href="oncoscan.html" target="_blank" rel="noopener noreferrer" class="btn-action-icon" title="Open OncoScan AI in new tab">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
-          <button type="button" class="btn-action-icon" onclick="toggleComparisonSection(true)" title="View Architecture Comparison">
+          <button type="button" class="btn-action-icon" onclick="toggleComparisonSection(true)" title="Compare Modalities & Architecture">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="8" height="18" rx="2"></rect>
-              <rect x="14" y="3" width="8" height="18" rx="2"></rect>
-              <line x1="6" y1="8" x2="6" y2="8.01"></line>
-              <line x1="18" y1="8" x2="18" y2="8.01"></line>
+              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+              <path d="M7 21h10"></path>
+              <path d="M12 3v18"></path>
+              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path>
             </svg>
           </button>
           <button type="button" class="btn-action-icon" onclick="openEmbeddedSandbox('oncoscan.html', 'OncoScan AI')" title="Preview in Sandbox Frame">
@@ -2406,12 +2408,13 @@
           <a href="qml/index.html" target="_blank" rel="noopener noreferrer" class="btn-action-icon" title="Open Hybrid QML in new tab">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
           </a>
-          <button type="button" class="btn-action-icon" onclick="toggleComparisonSection(true)" title="View Architecture Comparison">
+          <button type="button" class="btn-action-icon" onclick="toggleComparisonSection(true)" title="Compare Modalities & Architecture">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="8" height="18" rx="2"></rect>
-              <rect x="14" y="3" width="8" height="18" rx="2"></rect>
-              <line x1="6" y1="8" x2="6" y2="8.01"></line>
-              <line x1="18" y1="8" x2="18" y2="8.01"></line>
+              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"></path>
+              <path d="M7 21h10"></path>
+              <path d="M12 3v18"></path>
+              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"></path>
             </svg>
           </button>
           <button type="button" class="btn-action-icon" onclick="openEmbeddedSandbox('qml/index.html', 'QuantumPancreas Hybrid QML')" title="Preview in Sandbox Frame">
@@ -2689,13 +2692,33 @@
       <div class="comparison-modal-header">
         <div class="comparison-header-left">
           <div class="comparison-icon-box" aria-hidden="true">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="8" height="18" rx="2"></rect>
-              <rect x="14" y="3" width="8" height="18" rx="2"></rect>
-              <line x1="6" y1="7" x2="6" y2="7.01"></line>
-              <line x1="18" y1="7" x2="18" y2="7.01"></line>
-              <line x1="6" y1="12" x2="6" y2="12.01"></line>
-              <line x1="18" y1="12" x2="18" y2="12.01"></line>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="compGradCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#38bdf8"/>
+                  <stop offset="100%" stop-color="#0284c7"/>
+                </linearGradient>
+                <linearGradient id="compGradViolet" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#c084fc"/>
+                  <stop offset="100%" stop-color="#7c3aed"/>
+                </linearGradient>
+                <linearGradient id="compGradChrome" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#ffffff"/>
+                  <stop offset="100%" stop-color="#94a3b8"/>
+                </linearGradient>
+              </defs>
+              <!-- Center Column & Weighted Base -->
+              <path d="M12 3V20" stroke="url(#compGradChrome)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7 21H17" stroke="url(#compGradChrome)" stroke-width="2.2" stroke-linecap="round"/>
+              <!-- Balanced Crossbeam & Pivot -->
+              <path d="M3 7.5H21" stroke="url(#compGradChrome)" stroke-width="2" stroke-linecap="round"/>
+              <circle cx="12" cy="7.5" r="2" fill="#38bdf8"/>
+              <!-- Left Clinical Dish: Cyan (OncoScan AI Genomics) -->
+              <path d="M3 7.5L0.8 14.5C0.8 16.5 2.5 18 4.8 18C7 18 8.7 16.5 8.7 14.5L6.5 7.5" stroke="url(#compGradCyan)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M1 15C1 16.8 2.7 18 4.8 18C6.8 18 8.5 16.8 8.5 15H1Z" fill="url(#compGradCyan)" fill-opacity="0.3"/>
+              <!-- Right Clinical Dish: Violet (QuantumPancreas QML) -->
+              <path d="M17.5 7.5L15.3 14.5C15.3 16.5 17 18 19.2 18C21.5 18 23.2 16.5 23.2 14.5L21 7.5" stroke="url(#compGradViolet)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M15.5 15C15.5 16.8 17.2 18 19.2 18C21.2 18 23 16.8 23 15H15.5Z" fill="url(#compGradViolet)" fill-opacity="0.3"/>
             </svg>
           </div>
           <div>
