@@ -5,7 +5,6 @@ import { QuantumArchitectureTab } from "./components/QuantumArchitectureTab";
 import { BenchmarkLabTab } from "./components/BenchmarkLabTab";
 import { ClinicalInferenceTab } from "./components/ClinicalInferenceTab";
 import { QuantumBackgroundCanvas } from "./components/QuantumBackgroundCanvas";
-import { QuantumCursor } from "./components/QuantumCursor";
 import { PatientRecord, ModelBenchmark } from "./types";
 import { computeBenchmarks } from "./utils/qmlSimulator";
 import { Atom, ExternalLink } from "lucide-react";
@@ -135,8 +134,6 @@ export default function App() {
       {/* Background Animation Canvas */}
       <QuantumBackgroundCanvas />
 
-      {/* Interactive Quantum Biosensing Cursor */}
-      <QuantumCursor />
 
       {/* Top Application Header */}
       <Header activeTab={activeTab} setActiveTab={setActiveTab} threshold={threshold} />

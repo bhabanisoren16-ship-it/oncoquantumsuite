@@ -823,203 +823,16 @@ function initCardQuantumPancreasAnimation() {
 }
 
 /* ==========================================================================
-   PART 2: SIMPLE & SLEEK CLINICAL CURSOR ENGINE
+   PART 2: CURSOR ENGINE (Custom cursor animation disabled)
    ========================================================================== */
 function initQuantumCursor() {
-  // Completely disable custom cursor on mobile screens
-  if (window.innerWidth <= 768) return;
-  // Enable on any device with fine pointer accuracy (mouse, trackpad)
-  const hasPointer = window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches;
-  if (!hasPointer) return;
-  if (document.getElementById('quantum-cursor-dot')) return;
-
-  const isOncoScan = window.location.pathname.includes('oncoscan');
-  const primaryColor = isOncoScan ? '#0ea5e9' : '#22d3ee';
-  const hoverColor = isOncoScan ? '#10b981' : '#a855f7';
-
-  // 1. Inject Simple, Clean Styles
-  const style = document.createElement('style');
-  style.id = 'quantum-cursor-styles';
-  style.textContent = `
-    @media (min-width: 769px) {
-      html, body, *, *::before, *::after {
-        cursor: none !important;
-      }
-    }
-
-    .q-cursor-dot {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: ${isOncoScan ? '5px' : '5px'};
-      height: ${isOncoScan ? '5px' : '5px'};
-      border-radius: 50%;
-      background: ${isOncoScan ? '#0ea5e9' : 'rgba(255, 255, 255, 0.9)'};
-      box-shadow: ${isOncoScan 
-        ? '0 0 5px rgba(14, 165, 233, 0.5)' 
-        : '0 0 6px rgba(34, 211, 238, 0.45)'};
-      pointer-events: none;
-      z-index: 999999;
-      transform: translate(-50%, -50%);
-      transition: width 0.18s ease, 
-                  height 0.18s ease, 
-                  background-color 0.18s ease,
-                  box-shadow 0.18s ease,
-                  opacity 0.2s ease;
-      opacity: 0;
-    }
-
-    .q-cursor-ring {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: ${isOncoScan ? '24px' : '26px'};
-      height: ${isOncoScan ? '24px' : '26px'};
-      border-radius: 50%;
-      border: 1px solid ${isOncoScan ? 'rgba(14, 165, 233, 0.35)' : 'rgba(34, 211, 238, 0.45)'};
-      box-shadow: ${isOncoScan 
-        ? 'none' 
-        : '0 0 8px rgba(34, 211, 238, 0.18)'};
-      background-color: transparent;
-      pointer-events: none;
-      z-index: 999998;
-      transform: translate(-50%, -50%);
-      transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                  height 0.22s cubic-bezier(0.16, 1, 0.3, 1), 
-                  border-color 0.2s ease, 
-                  background-color 0.2s ease,
-                  box-shadow 0.2s ease,
-                  transform 0.08s ease,
-                  opacity 0.2s ease;
-      opacity: 0;
-    }
-
-    /* Hovering state over interactive elements */
-    .q-cursor-ring.hovering {
-      width: ${isOncoScan ? '34px' : '36px'};
-      height: ${isOncoScan ? '34px' : '36px'};
-      border-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.6)' : 'rgba(168, 85, 247, 0.65)'};
-      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.04)' : 'rgba(168, 85, 247, 0.05)'};
-      box-shadow: ${isOncoScan 
-        ? 'none' 
-        : '0 0 10px rgba(168, 85, 247, 0.22)'};
-    }
-
-    .q-cursor-dot.hovering {
-      width: 4px;
-      height: 4px;
-      background: ${isOncoScan ? '#10b981' : '#ffffff'};
-      box-shadow: ${isOncoScan ? '0 0 5px rgba(16, 185, 129, 0.6)' : '0 0 5px rgba(192, 132, 252, 0.5)'};
-    }
-
-    /* Subtle press state on click */
-    .q-cursor-ring.clicking {
-      width: ${isOncoScan ? '18px' : '20px'};
-      height: ${isOncoScan ? '18px' : '20px'};
-      border-color: ${isOncoScan ? hoverColor : '#22d3ee'};
-      background-color: ${isOncoScan ? 'rgba(16, 185, 129, 0.1)' : 'rgba(34, 211, 238, 0.1)'};
-      box-shadow: ${isOncoScan ? 'none' : '0 0 8px rgba(34, 211, 238, 0.3)'};
-    }
-    .q-cursor-dot.clicking {
-      transform: translate(-50%, -50%) scale(0.8);
-    }
-  `;
-  document.head.appendChild(style);
-
-  // 2. Create Minimal DOM Elements
-  const dot = document.createElement('div');
-  dot.id = 'quantum-cursor-dot';
-  dot.className = 'q-cursor-dot';
-  document.body.appendChild(dot);
-
-  const ring = document.createElement('div');
-  ring.id = 'quantum-cursor-ring';
-  ring.className = 'q-cursor-ring';
-  document.body.appendChild(ring);
-
-  let mouseX = -100;
-  let mouseY = -100;
-  let ringX = -100;
-  let ringY = -100;
-  let isVisible = false;
-
-  window.addEventListener('mousemove', (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-
-    if (!isVisible) {
-      isVisible = true;
-      dot.style.opacity = '1';
-      ring.style.opacity = '1';
-      ringX = mouseX;
-      ringY = mouseY;
-    }
-
-    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) translate(-50%, -50%)`;
-  });
-
-  window.addEventListener('mouseleave', () => {
-    isVisible = false;
-    dot.style.opacity = '0';
-    ring.style.opacity = '0';
-  });
-
-  window.addEventListener('mouseenter', () => {
-    isVisible = true;
-    dot.style.opacity = '1';
-    ring.style.opacity = '1';
-  });
-
-  // Micro-interaction on Click
-  window.addEventListener('mousedown', () => {
-    ring.classList.add('clicking');
-    dot.classList.add('clicking');
-  });
-
-  window.addEventListener('mouseup', () => {
-    ring.classList.remove('clicking');
-    dot.classList.remove('clicking');
-  });
-
-  // Interactive Hover Detection (Delegated)
-  document.addEventListener('mouseover', (e) => {
-    const target = e.target.closest('a, button, input, select, textarea, .platform-card, .btn-launch-primary, .chip-badge, .status-pill, .sample-pill-container, tr, .tab-btn, [role="button"], label');
-    if (target) {
-      ring.classList.add('hovering');
-      dot.classList.add('hovering');
-    }
-  });
-
-  document.addEventListener('mouseout', (e) => {
-    const target = e.target.closest('a, button, input, select, textarea, .platform-card, .btn-launch-primary, .chip-badge, .status-pill, .sample-pill-container, tr, .tab-btn, [role="button"], label');
-    if (target) {
-      ring.classList.remove('hovering');
-      dot.classList.remove('hovering');
-    }
-  });
-
-  window.addEventListener('resize', () => {
-    if (window.innerWidth <= 768) {
-      dot.style.display = 'none';
-      ring.style.display = 'none';
-      isVisible = false;
-    } else {
-      dot.style.display = 'block';
-      ring.style.display = 'block';
-    }
-  });
-
-  // Smooth Ring Follow Loop (Fluid Lerp)
-  function renderCursor() {
-    if (isVisible && window.innerWidth > 768) {
-      ringX += (mouseX - ringX) * 0.16;
-      ringY += (mouseY - ringY) * 0.16;
-      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0) translate(-50%, -50%)`;
-    }
-    requestAnimationFrame(renderCursor);
-  }
-
-  renderCursor();
+  // Cursor animation disabled: use standard native OS cursor
+  const dot = document.getElementById('quantum-cursor-dot');
+  if (dot) dot.remove();
+  const ring = document.getElementById('quantum-cursor-ring');
+  if (ring) ring.remove();
+  const style = document.getElementById('quantum-cursor-styles');
+  if (style) style.remove();
 }
 
 /* ==========================================================================
@@ -1029,7 +842,6 @@ function initAllOncoQuantumFX() {
   initQuantumGenomicBackground();
   initCardOncoScanAnimation();
   initCardQuantumPancreasAnimation();
-  initQuantumCursor();
 }
 
 // Immediate cursor ignition so pointer never flickers while waiting for heavy DOM/Canvas

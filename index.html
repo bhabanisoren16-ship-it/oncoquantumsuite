@@ -55,11 +55,70 @@
       --transition-smooth: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Instant Cursor Suppression for Desktop Screens Only (prevents normal OS cursor flicker on desktop) */
-    @media (min-width: 769px) {
-      html, body, *, *::before, *::after {
-        cursor: none !important;
-      }
+
+    /* Force Standard System OS Cursor */
+    html, body {
+      cursor: default !important;
+    }
+    a, button, [role="button"], select, .cursor-pointer, .btn-launch-primary, .tab-btn {
+      cursor: pointer !important;
+    }
+    input, textarea {
+      cursor: text !important;
+    }
+
+    /* Hard suppression of any custom cursor elements */
+    #quantum-cursor-dot,
+    #quantum-cursor-ring,
+    .q-cursor-dot,
+    .q-cursor-ring {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    /* Completely hide scrollbars across all browsers while preserving scroll */
+    html,
+    body,
+    #root,
+    * {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    *::-webkit-scrollbar,
+    ::-webkit-scrollbar,
+    html::-webkit-scrollbar,
+    body::-webkit-scrollbar {
+      display: none !important;
+      width: 0px !important;
+      height: 0px !important;
+      background: transparent !important;
+    }
+
+    *::-webkit-scrollbar-thumb,
+    ::-webkit-scrollbar-thumb {
+      display: none !important;
+      background: transparent !important;
+    }
+
+    *::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-track {
+      display: none !important;
+      background: transparent !important;
+    }
+
+    *::-webkit-scrollbar-button,
+    ::-webkit-scrollbar-button {
+      display: none !important;
+      width: 0px !important;
+      height: 0px !important;
+    }
+
+    *::-webkit-scrollbar-corner,
+    ::-webkit-scrollbar-corner {
+      display: none !important;
     }
 
     * {
@@ -2366,7 +2425,7 @@
     });
   </script>
 
-  <!-- Unified Quantum & Genomic Canvas and Cursor Animation Engine -->
-  <script src="bg-animation.js"></script>
+  <!-- Unified Quantum & Genomic Canvas Engine -->
+  <script src="bg-animation.js?v=4.0"></script>
 </body>
 </html>

@@ -40,10 +40,69 @@ try {
     <meta name="twitter:card" content="summary_large_image" />
     
     <style>
-      @media (any-pointer: fine), (pointer: fine) {
-        html, body, *, *::before, *::after {
-          cursor: none !important;
-        }
+      /* Force Standard System OS Cursor */
+      html, body {
+        cursor: default !important;
+      }
+      a, button, [role="button"], select, .cursor-pointer {
+        cursor: pointer !important;
+      }
+      input, textarea {
+        cursor: text !important;
+      }
+
+      /* Hard suppression of any custom cursor elements */
+      #quantum-cursor-dot,
+      #quantum-cursor-ring,
+      .q-cursor-dot,
+      .q-cursor-ring {
+        display: none !important;
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+      }
+
+      /* Completely hide scrollbars across all browsers while preserving scroll */
+      html,
+      body,
+      #root,
+      * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+      }
+
+      *::-webkit-scrollbar,
+      ::-webkit-scrollbar,
+      html::-webkit-scrollbar,
+      body::-webkit-scrollbar {
+        display: none !important;
+        width: 0px !important;
+        height: 0px !important;
+        background: transparent !important;
+      }
+
+      *::-webkit-scrollbar-thumb,
+      ::-webkit-scrollbar-thumb {
+        display: none !important;
+        background: transparent !important;
+      }
+
+      *::-webkit-scrollbar-track,
+      ::-webkit-scrollbar-track {
+        display: none !important;
+        background: transparent !important;
+      }
+
+      *::-webkit-scrollbar-button,
+      ::-webkit-scrollbar-button {
+        display: none !important;
+        width: 0px !important;
+        height: 0px !important;
+      }
+
+      *::-webkit-scrollbar-corner,
+      ::-webkit-scrollbar-corner {
+        display: none !important;
       }
 
       html, body {
@@ -53,126 +112,7 @@ try {
         color: #f8fafc;
         font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       }
-
-      .q-cursor-dot {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 6px;
-        height: 6px;
-        border-radius: 50%;
-        background: #22d3ee;
-        box-shadow: 0 0 8px #22d3ee;
-        pointer-events: none;
-        z-index: 999999;
-        transform: translate(-50%, -50%);
-        transition: width 0.18s ease, height 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease;
-        opacity: 0;
-      }
-
-      .q-cursor-ring {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 26px;
-        height: 26px;
-        border-radius: 50%;
-        border: 1.5px solid rgba(34, 211, 238, 0.45);
-        pointer-events: none;
-        z-index: 999998;
-        transform: translate(-50%, -50%);
-        transition: width 0.22s cubic-bezier(0.16, 1, 0.3, 1), height 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease, transform 0.08s ease, opacity 0.2s ease;
-        opacity: 0;
-      }
-
-      .q-cursor-ring.hovering {
-        width: 40px;
-        height: 40px;
-        border-color: rgba(168, 85, 247, 0.75);
-        background-color: rgba(168, 85, 247, 0.08);
-      }
-
-      .q-cursor-dot.hovering {
-        width: 4px;
-        height: 4px;
-        background: #a855f7;
-        box-shadow: 0 0 10px #a855f7;
-      }
-
-      .q-cursor-ring.clicking {
-        width: 20px;
-        height: 20px;
-        border-color: #a855f7;
-        background-color: rgba(168, 85, 247, 0.15);
-      }
-
-      .q-cursor-dot.clicking {
-        transform: translate(-50%, -50%) scale(0.8);
-      }
     </style>
-
-    <!-- Immediate Pre-Boot Quantum Cursor (prevents any default OS cursor appearing during initial load) -->
-    <script>
-      (function() {
-        if (typeof window === 'undefined') return;
-        var hasPointer = window.matchMedia && (window.matchMedia('(pointer: fine)').matches || window.matchMedia('(any-pointer: fine)').matches);
-        if (!hasPointer) return;
-
-        function bootCursor() {
-          if (document.getElementById('quantum-cursor-dot')) return;
-          var dot = document.createElement('div');
-          dot.id = 'quantum-cursor-dot';
-          dot.className = 'q-cursor-dot';
-          var ring = document.createElement('div');
-          ring.id = 'quantum-cursor-ring';
-          ring.className = 'q-cursor-ring';
-          var parent = document.body || document.documentElement;
-          parent.appendChild(dot);
-          parent.appendChild(ring);
-
-          var mouseX = -100, mouseY = -100, ringX = -100, ringY = -100, isVisible = false;
-          window.addEventListener('mousemove', function(e) {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            if (!isVisible) {
-              isVisible = true;
-              dot.style.opacity = '1';
-              ring.style.opacity = '1';
-              ringX = mouseX;
-              ringY = mouseY;
-            }
-            dot.style.transform = 'translate3d(' + mouseX + 'px, ' + mouseY + 'px, 0) translate(-50%, -50%)';
-          }, { passive: true });
-
-          window.addEventListener('mouseleave', function() {
-            isVisible = false;
-            dot.style.opacity = '0';
-            ring.style.opacity = '0';
-          });
-          window.addEventListener('mouseenter', function() {
-            isVisible = true;
-            dot.style.opacity = '1';
-            ring.style.opacity = '1';
-          });
-
-          function render() {
-            if (isVisible) {
-              ringX += (mouseX - ringX) * 0.18;
-              ringY += (mouseY - ringY) * 0.18;
-              ring.style.transform = 'translate3d(' + ringX + 'px, ' + ringY + 'px, 0) translate(-50%, -50%)';
-            }
-            requestAnimationFrame(render);
-          }
-          requestAnimationFrame(render);
-        }
-
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', bootCursor, { once: true });
-        } else {
-          bootCursor();
-        }
-      })();
-    </script>
 
     <!-- Universal Dual-Path Resolver: Works seamlessly on file://, /qml, /qml/, and subpaths -->
     <script>
@@ -235,29 +175,39 @@ try {
       const activeJsFullPath = path.join(qmlAssetsDir, jsFile);
       const activeCssFullPath = path.join(qmlAssetsDir, cssFile);
 
-      const legacyJsAliases = ['index.js', 'index-Djo3CCbO.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', 'index-wFyglsvi.js', jsFile];
-      const legacyCssAliases = ['index.css', 'index-VD4-XD_O.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', cssFile];
+      const legacyJsAliases = ['index.js', 'index-Djo3CCbO.js', 'index-DH5Lw7Zh.js', 'index-BHNNrSaa.js', 'index-CLCyivgx.js', 'index-wFyglsvi.js', 'index-Dg1RGmWa.js', 'index-Bxo1k8I3.js', 'index-C67WeC9c.js', 'index-CjiOpRTj.js', 'index-CpjZIDwN.js', jsFile];
+      const legacyCssAliases = ['index.css', 'index-VD4-XD_O.css', 'index-1Ert2ZfF.css', 'index-BLc9p4tu.css', 'index-BljPVjzh.css', 'index-DLtZPpwA.css', 'index-BtA4nfGY.css', 'index-CrNYA0B-.css', 'index-DAm3ploo.css', 'index-pLdwMM7G.css', cssFile];
 
       legacyJsAliases.forEach(alias => {
-        // Copy into qml/assets
         const destQml = path.join(qmlAssetsDir, alias);
         if (destQml !== activeJsFullPath) {
           try { fs.copyFileSync(activeJsFullPath, destQml); } catch (e) {}
         }
-        // Copy into root assets/
         const destRoot = path.join(rootAssetsDir, alias);
         try { fs.copyFileSync(activeJsFullPath, destRoot); } catch (e) {}
       });
 
       legacyCssAliases.forEach(alias => {
-        // Copy into qml/assets
         const destQml = path.join(qmlAssetsDir, alias);
         if (destQml !== activeCssFullPath) {
           try { fs.copyFileSync(activeCssFullPath, destQml); } catch (e) {}
         }
-        // Copy into root assets/
         const destRoot = path.join(rootAssetsDir, alias);
         try { fs.copyFileSync(activeCssFullPath, destRoot); } catch (e) {}
+      });
+
+      // Blanket sync: Ensure every existing .js and .css file in assets and qml/assets is overwritten with current build
+      [rootAssetsDir, qmlAssetsDir].forEach(dir => {
+        if (!fs.existsSync(dir)) return;
+        fs.readdirSync(dir).forEach(file => {
+          const fullPath = path.join(dir, file);
+          if (file.endsWith('.js') && fullPath !== activeJsFullPath) {
+            try { fs.copyFileSync(activeJsFullPath, fullPath); } catch (e) {}
+          }
+          if (file.endsWith('.css') && fullPath !== activeCssFullPath) {
+            try { fs.copyFileSync(activeCssFullPath, fullPath); } catch (e) {}
+          }
+        });
       });
 
       console.log('✓ Synchronized dual-directory assets (qml/assets & assets/) with zero-404 alias matrix.');
