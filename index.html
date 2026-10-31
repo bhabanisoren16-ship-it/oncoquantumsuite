@@ -2096,6 +2096,85 @@
         gap: 5px !important;
       }
     }
+  
+    /* ==========================================================================
+       TECHNICAL ARCHITECTURE COMPARISON MODAL (HIDDEN FROM BOTTOM)
+       ========================================================================== */
+    .comparison-modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 4, 10, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      animation: modalFadeIn 0.25s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .comparison-modal-card {
+      background: #0b1224;
+      border: 1px solid rgba(56, 189, 248, 0.35);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 1180px;
+      max-height: 88vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.85), 0 0 35px rgba(14, 165, 233, 0.2);
+      animation: modalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .comparison-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 26px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: rgba(14, 21, 38, 0.65);
+      flex-shrink: 0;
+    }
+
+    .btn-modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .btn-modal-close:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: rgba(239, 68, 68, 0.5);
+      color: #fca5a5;
+      transform: rotate(90deg);
+    }
+
+    .comparison-modal-body {
+      padding: 24px 26px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
   </style>
 </head>
 <body>
@@ -2403,92 +2482,7 @@
       </div>
     </section>
 
-    <!-- ==========================================
-         SIDE-BY-SIDE FEATURE & CLINICAL MATRIX
-         ========================================== -->
-    <section class="comparison-section collapsed" id="comparison-section">
-      <div class="comparison-header-bar" id="comparison-header-bar" onclick="toggleComparisonSection()" role="button" tabindex="0" aria-expanded="false" aria-controls="comparison-body-wrapper" title="Click to view or hide Architecture Comparison">
-        <div class="comparison-header-left">
-          <div class="comparison-icon-box" aria-hidden="true">
-            <!-- Modern Architecture Split-Compare Icon -->
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="3" width="8" height="18" rx="2"></rect>
-              <rect x="14" y="3" width="8" height="18" rx="2"></rect>
-              <line x1="6" y1="7" x2="6" y2="7.01"></line>
-              <line x1="18" y1="7" x2="18" y2="7.01"></line>
-              <line x1="6" y1="12" x2="6" y2="12.01"></line>
-              <line x1="18" y1="12" x2="18" y2="12.01"></line>
-            </svg>
-          </div>
-          <div>
-            <div class="comparison-title-row">
-              <h3>Technical & Clinical Architecture Comparison</h3>
-              <span class="comparison-badge">OncoScan AI vs QuantumPancreas AI</span>
-            </div>
-            <p class="section-subtitle">Side-by-side evaluation of detection modalities, clinical targets, and algorithmic foundations</p>
-          </div>
-        </div>
-        <div class="comparison-header-right">
-          <button type="button" class="btn-toggle-comparison" id="btn-toggle-comparison" aria-label="Toggle comparison table">
-            <span id="text-toggle-comparison">View Comparison</span>
-            <svg id="chevron-comparison" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="6 9 12 15 18 9"></polyline>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Collapsible Body -->
-      <div class="comparison-body-wrapper" id="comparison-body-wrapper" style="display: none;">
-        <div class="comparison-table-wrapper">
-        <table class="comparison-table">
-          <thead>
-            <tr>
-              <th>Evaluation Parameter</th>
-              <th>OncoScan AI (Genomics)</th>
-              <th>QuantumPancreas AI (Hybrid QML)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td class="td-dimension">Clinical Target</td>
-              <td class="td-oncoscan">Pan-Cancer Multi-Class: Breast (BRCA), Lung (LUAD), Pancreatic (PDAC), & Normal Tissue</td>
-              <td class="td-hybrid-qml">Early-Stage Pancreatic Ductal Adenocarcinoma (PDAC) vs. Benign & Normal controls</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">Biological Sample Type</td>
-              <td class="td-oncoscan">Biopsy RNA-Seq / Genomic log2 TPM gene expression + circulating DNA</td>
-              <td class="td-hybrid-qml">Completely Non-Invasive Urine Specimen (Urinary Proteomic & Metabolomic panel)</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">Primary Biomarker Panel</td>
-              <td class="td-oncoscan">20 Genomic Drivers: BRCA1/2, ERBB2, EGFR, KRAS, TP53, PTEN, MYC, CDK1, UHRF1, etc.</td>
-              <td class="td-hybrid-qml">LYVE1, REG1B, TFF1, Creatinine, & Plasma CA 19-9 (Debernardi et al., PLoS Med 2020)</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">Computational Architecture</td>
-              <td class="td-oncoscan">Classical Deep Dense Neural Network + Normalized Cosine Nearest-Neighbor Projection</td>
-              <td class="td-hybrid-qml">4-Qubit Variational Quantum Classifier (VQC) with Parameterized Rotations & Circular CNOTs</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">Mutational Screening</td>
-              <td class="td-oncoscan">Direct KRAS codon 12 sequence scanning (detects G12D, G12V, G12R alterations)</td>
-              <td class="td-hybrid-qml">Lewis-negative (Leᵃ⁻ᵇ⁻) antigen rescue bypassing blood test false negatives</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">AI Decision Support</td>
-              <td class="td-oncoscan">Direct biomarker deviation radar & reference cohort nearest-neighbor matching</td>
-              <td class="td-hybrid-qml">Gemini 3.8 Flash Clinical Reasoning for automated oncologist report generation</td>
-            </tr>
-            <tr>
-              <td class="td-dimension">Reference Cohort</td>
-              <td class="td-oncoscan">700 Synthetic TCGA Patient Records</td>
-              <td class="td-hybrid-qml">220 Clinical Urine Cohort Records (Debernardi Benchmark)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    
 
     <!-- ==========================================
          FOOTER
@@ -2654,9 +2648,124 @@
       }
     });
 
+  function openComparisonModal() {
+      const modal = document.getElementById('comparison-modal');
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeComparisonModal(event) {
+      if (event && event.target && !event.target.classList.contains('comparison-modal-backdrop') && !event.target.closest('.btn-modal-close')) {
+        return;
+      }
+      const modal = document.getElementById('comparison-modal');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+      }
+    }
+
+    function toggleComparisonSection(forceOpen) {
+      openComparisonModal();
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeComparisonModal();
+      }
+    });
   </script>
 
   <!-- Unified Quantum & Genomic Canvas Engine -->
   <script src="bg-animation.js?v=4.0"></script>
+
+  <!-- ==========================================
+       TECHNICAL ARCHITECTURE COMPARISON MODAL (OVERLAY ONLY)
+       ========================================== -->
+  <div class="comparison-modal-backdrop" id="comparison-modal" style="display: none;" onclick="closeComparisonModal(event)">
+    <div class="comparison-modal-card" onclick="event.stopPropagation()">
+      <div class="comparison-modal-header">
+        <div class="comparison-header-left">
+          <div class="comparison-icon-box" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="8" height="18" rx="2"></rect>
+              <rect x="14" y="3" width="8" height="18" rx="2"></rect>
+              <line x1="6" y1="7" x2="6" y2="7.01"></line>
+              <line x1="18" y1="7" x2="18" y2="7.01"></line>
+              <line x1="6" y1="12" x2="6" y2="12.01"></line>
+              <line x1="18" y1="12" x2="18" y2="12.01"></line>
+            </svg>
+          </div>
+          <div>
+            <div class="comparison-title-row">
+              <h3>Technical & Clinical Architecture Comparison</h3>
+              <span class="comparison-badge">OncoScan AI vs QuantumPancreas AI</span>
+            </div>
+            <p class="section-subtitle">Side-by-side evaluation of detection modalities, clinical targets, and algorithmic foundations</p>
+          </div>
+        </div>
+        <button type="button" class="btn-modal-close" onclick="closeComparisonModal()" title="Close comparison (Esc)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="comparison-modal-body">
+        <div class="comparison-table-wrapper">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>Evaluation Parameter</th>
+                <th>OncoScan AI (Genomics)</th>
+                <th>QuantumPancreas AI (Hybrid QML)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="td-dimension">Clinical Target</td>
+                <td class="td-oncoscan">Pan-Cancer Multi-Class: Breast (BRCA), Lung (LUAD), Pancreatic (PDAC), & Normal Tissue</td>
+                <td class="td-hybrid-qml">Early-Stage Pancreatic Ductal Adenocarcinoma (PDAC) vs. Benign & Normal controls</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">Biological Sample Type</td>
+                <td class="td-oncoscan">Biopsy RNA-Seq / Genomic log2 TPM gene expression + circulating DNA</td>
+                <td class="td-hybrid-qml">Completely Non-Invasive Urine Specimen (Urinary Proteomic & Metabolomic panel)</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">Primary Biomarker Panel</td>
+                <td class="td-oncoscan">20 Genomic Drivers: BRCA1/2, ERBB2, EGFR, KRAS, TP53, PTEN, MYC, CDK1, UHRF1, etc.</td>
+                <td class="td-hybrid-qml">LYVE1, REG1B, TFF1, Creatinine, & Plasma CA 19-9 (Debernardi et al., PLoS Med 2020)</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">Computational Architecture</td>
+                <td class="td-oncoscan">Classical Deep Dense Neural Network + Normalized Cosine Nearest-Neighbor Projection</td>
+                <td class="td-hybrid-qml">4-Qubit Variational Quantum Classifier (VQC) with Parameterized Rotations & Circular CNOTs</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">Mutational Screening</td>
+                <td class="td-oncoscan">Direct KRAS codon 12 sequence scanning (detects G12D, G12V, G12R alterations)</td>
+                <td class="td-hybrid-qml">Lewis-negative (Leᵃ⁻ᵇ⁻) antigen rescue bypassing blood test false negatives</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">AI Decision Support</td>
+                <td class="td-oncoscan">Direct biomarker deviation radar & reference cohort nearest-neighbor matching</td>
+                <td class="td-hybrid-qml">Gemini 3.8 Flash Clinical Reasoning for automated oncologist report generation</td>
+              </tr>
+              <tr>
+                <td class="td-dimension">Reference Cohort</td>
+                <td class="td-oncoscan">700 Synthetic TCGA Patient Records</td>
+                <td class="td-hybrid-qml">220 Clinical Urine Cohort Records (Debernardi Benchmark)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
