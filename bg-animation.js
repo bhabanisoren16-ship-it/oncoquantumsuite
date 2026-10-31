@@ -16,8 +16,14 @@
    ========================================================================== */
 function initQuantumGenomicBackground() {
   const canvas = document.getElementById('quantum-bg-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+  if (canvas) {
+    canvas.style.display = 'none';
+    canvas.width = 0;
+    canvas.height = 0;
+  }
+  return;
+  // Background animation disabled
+  const ctx = canvas ? canvas.getContext('2d') : null;
   let width, height;
   let particles = [];
   const maxDistance = 155;
@@ -268,6 +274,13 @@ function initQuantumGenomicBackground() {
  */
 function initCardOncoScanAnimation() {
   const canvas = document.getElementById('canvas-card-oncoscan');
+  if (canvas) {
+    canvas.style.display = 'none';
+    canvas.width = 0;
+    canvas.height = 0;
+  }
+  return;
+  // Card interior animation disabled
   if (!canvas) return;
   const parent = canvas.closest('.card-oncoscan');
   if (!parent) return;
@@ -534,6 +547,13 @@ function initCardOncoScanAnimation() {
  */
 function initCardQuantumPancreasAnimation() {
   const canvas = document.getElementById('canvas-card-qml');
+  if (canvas) {
+    canvas.style.display = 'none';
+    canvas.width = 0;
+    canvas.height = 0;
+  }
+  return;
+  // Card interior animation disabled
   if (!canvas) return;
   const parent = canvas.closest('.card-hybrid-qml');
   if (!parent) return;
@@ -842,6 +862,18 @@ function initAllOncoQuantumFX() {
   initQuantumGenomicBackground();
   initCardOncoScanAnimation();
   initCardQuantumPancreasAnimation();
+  
+  // Background animation suppression: ensure canvases are hidden
+  ['quantum-bg-canvas', 'canvas-card-oncoscan', 'canvas-card-qml'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.style.display = 'none';
+      if (el.getContext) {
+        const ctx = el.getContext('2d');
+        if (ctx) ctx.clearRect(0, 0, el.width || 300, el.height || 150);
+      }
+    }
+  });
 }
 
 // Immediate cursor ignition so pointer never flickers while waiting for heavy DOM/Canvas

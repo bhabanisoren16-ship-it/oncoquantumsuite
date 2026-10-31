@@ -62,6 +62,16 @@ try {
         pointer-events: none !important;
       }
 
+      /* Suppression of background animations and canvases */
+      #quantum-bg-canvas,
+      .quantum-canvas,
+      .quantum-aurora-glow,
+      .quantum-circuit-grid {
+        display: none !important;
+        animation: none !important;
+        visibility: hidden !important;
+      }
+
       /* Completely hide scrollbars across all browsers while preserving scroll */
       html,
       body,

@@ -78,6 +78,37 @@
       pointer-events: none !important;
     }
 
+    /* Complete suppression of all background animations, particles, canvases, and moving beams */
+    #quantum-bg-canvas,
+    .quantum-canvas,
+    #canvas-card-oncoscan,
+    #canvas-card-qml,
+    .card-interior-canvas,
+    .ambient-orb,
+    .ambient-orb-cyan,
+    .ambient-orb-violet,
+    .ambient-orb-center,
+    .ambient-shimmer-beam,
+    .card-scanner-beam,
+    .beam-oncoscan,
+    .beam-qml,
+    .card-interior-ambient,
+    .card-mesh-oncoscan,
+    .card-mesh-qml {
+      display: none !important;
+      animation: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    .ambient-background {
+      animation: none !important;
+    }
+
+    .ambient-grid {
+      animation: none !important;
+    }
+
     /* Completely hide scrollbars across all browsers while preserving scroll */
     html,
     body,
@@ -203,7 +234,8 @@
         radial-gradient(circle at 75% 70%, rgba(139, 92, 246, 0.11) 0%, transparent 48%),
         radial-gradient(circle at 20% 75%, rgba(16, 185, 129, 0.08) 0%, transparent 45%);
       filter: blur(58px);
-      animation: auroraWave 24s ease-in-out infinite;
+      /* Background animation disabled */
+      animation: none;
     }
 
     .ambient-orb {

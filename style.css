@@ -182,6 +182,20 @@ button {
   }
 }
 
+/* Complete suppression of all background animations, particles, canvases, and moving beams */
+#quantum-bg-canvas,
+.quantum-canvas,
+#canvas-card-oncoscan,
+#canvas-card-qml,
+.card-scanner-beam,
+.beam-oncoscan,
+.beam-qml {
+  display: none !important;
+  animation: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
 .ambient-background {
   position: fixed;
   inset: -60px;
@@ -192,16 +206,12 @@ button {
     radial-gradient(circle at 82% 28%, rgba(99, 102, 241, 0.12) 0%, transparent 50%),
     radial-gradient(circle at 50% 85%, rgba(15, 23, 42, 0.40) 0%, transparent 60%),
     radial-gradient(circle at 50% 5%, rgba(6, 182, 212, 0.08) 0%, transparent 45%);
-  animation: ambientBreathe 16s ease-in-out infinite alternate;
+  animation: none !important;
 }
 
 .quantum-canvas {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  display: none !important;
   pointer-events: none;
-  z-index: 0;
 }
 
 .app-layout {
