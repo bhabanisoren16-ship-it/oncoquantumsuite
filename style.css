@@ -110,10 +110,10 @@ body::-webkit-scrollbar {
   --color-normal-subtle: rgba(16, 185, 129, 0.10);
   --color-normal-border: rgba(16, 185, 129, 0.35);
 
-  /* Typography Colors - High-Contrast System */
-  --text-primary: #ffffff;
-  --text-secondary: #f1f5f9;
-  --text-muted: #cbd5e1;
+  /* Typography Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
   --text-inverse: #0f172a;
 
   /* Typography Scale */

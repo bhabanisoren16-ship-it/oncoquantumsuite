@@ -19,30 +19,30 @@
     :root {
       --bg-base: #02040a;
       --bg-surface: #070b14;
-      --bg-surface-elevated: #0f172a;
-      --bg-glass: rgba(11, 17, 33, 0.95);
-      --bg-glass-card: #0c1427;
+      --bg-surface-elevated: #0e1524;
+      --bg-glass: rgba(7, 11, 20, 0.85);
+      --bg-glass-card: rgba(10, 16, 30, 0.72);
       
-      --border-subtle: rgba(255, 255, 255, 0.16);
-      --border-medium: rgba(255, 255, 255, 0.28);
-      --border-glow-cyan: rgba(56, 189, 248, 0.5);
-      --border-glow-violet: rgba(192, 132, 252, 0.5);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-medium: rgba(255, 255, 255, 0.16);
+      --border-glow-cyan: rgba(6, 182, 212, 0.4);
+      --border-glow-violet: rgba(139, 92, 246, 0.4);
 
-      --cyan-400: #38bdf8;
-      --cyan-500: #0ea5e9;
+      --cyan-400: #22d3ee;
+      --cyan-500: #06b6d4;
       --sky-400: #38bdf8;
-      --indigo-400: #a5b4fc;
-      --indigo-500: #818cf8;
-      --violet-400: #c084fc;
-      --violet-500: #a855f7;
+      --indigo-400: #818cf8;
+      --indigo-500: #6366f1;
+      --violet-400: #a78bfa;
+      --violet-500: #8b5cf6;
       --emerald-400: #34d399;
       --emerald-500: #10b981;
       --rose-400: #fb7185;
       --amber-400: #fbbf24;
 
-      --text-primary: #ffffff;
-      --text-secondary: #f1f5f9;
-      --text-muted: #cbd5e1;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
 
       --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
@@ -686,33 +686,29 @@
       50% { opacity: 1; transform: scale(1.25); }
     }
 
-    /* Card Themes: High-Contrast Solid Deep Slate Surfaces */
+    /* Card Themes */
     .card-oncoscan {
-      background: radial-gradient(circle at 10% 0%, rgba(14, 165, 233, 0.22) 0%, rgba(15, 23, 42, 0.98) 50%, #090e1a 100%) !important;
-      border: 1px solid rgba(56, 189, 248, 0.38) !important;
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(14, 165, 233, 0.18) !important;
+      background: radial-gradient(circle at 10% 0%, rgba(14, 165, 233, 0.14) 0%, rgba(18, 27, 50, 0.72) 60%);
     }
     .card-oncoscan::before {
       background: linear-gradient(90deg, var(--sky-400), var(--indigo-500));
     }
     .card-oncoscan:hover {
       transform: translateY(-5px);
-      border-color: rgba(56, 189, 248, 0.65) !important;
-      box-shadow: 0 22px 42px -10px rgba(14, 165, 233, 0.4) !important;
+      border-color: rgba(34, 211, 238, 0.35);
+      box-shadow: 0 20px 36px -12px rgba(14, 165, 233, 0.20);
     }
 
     .card-hybrid-qml {
-      background: radial-gradient(circle at 90% 0%, rgba(168, 85, 247, 0.22) 0%, rgba(20, 18, 45, 0.98) 50%, #0c0e1e 100%) !important;
-      border: 1px solid rgba(192, 132, 252, 0.38) !important;
-      box-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.7), 0 0 24px -4px rgba(168, 85, 247, 0.18) !important;
+      background: radial-gradient(circle at 90% 0%, rgba(168, 85, 247, 0.16) 0%, rgba(18, 27, 50, 0.72) 60%);
     }
     .card-hybrid-qml::before {
       background: linear-gradient(90deg, var(--cyan-400), var(--violet-500));
     }
     .card-hybrid-qml:hover {
       transform: translateY(-5px);
-      border-color: rgba(192, 132, 252, 0.65) !important;
-      box-shadow: 0 22px 42px -10px rgba(168, 85, 247, 0.4) !important;
+      border-color: rgba(168, 85, 247, 0.35);
+      box-shadow: 0 20px 36px -12px rgba(139, 92, 246, 0.20);
     }
 
     /* Card Top Bar */
@@ -785,60 +781,57 @@
     }
 
     .chip-badge {
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      padding: 4px 11px;
+      padding: 3px 9px;
       border-radius: var(--radius-full);
       font-family: var(--font-mono);
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.20);
-      color: #f8fafc;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
     }
 
     .chip-port {
-      background: rgba(14, 165, 233, 0.22);
-      border-color: rgba(56, 189, 248, 0.45);
-      color: #38bdf8;
+      background: rgba(14, 165, 233, 0.12);
+      border-color: rgba(14, 165, 233, 0.3);
+      color: var(--cyan-400);
     }
 
     .chip-qml {
-      background: rgba(168, 85, 247, 0.22);
-      border-color: rgba(192, 132, 252, 0.45);
-      color: #d8b4fe;
+      background: rgba(168, 85, 247, 0.12);
+      border-color: rgba(168, 85, 247, 0.3);
+      color: var(--violet-400);
     }
 
     /* Card Content */
     .card-body {
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 14px;
     }
 
     .card-title-group h2 {
-      font-size: 1.75rem;
+      font-size: 1.65rem;
       font-weight: 800;
       letter-spacing: -0.02em;
-      color: #ffffff;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      color: #fff;
     }
 
     .card-title-group .card-subtitle {
-      font-size: 0.94rem;
-      font-weight: 600;
-      color: #38bdf8;
-      margin-top: 3px;
-      letter-spacing: 0.01em;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--cyan-400);
+      margin-top: 2px;
     }
 
     .card-hybrid-qml .card-title-group .card-subtitle {
-      color: #c084fc;
+      color: var(--violet-400);
     }
 
     .card-summary {
-      font-size: 0.96rem;
-      color: #f1f5f9;
-      line-height: 1.62;
-      font-weight: 400;
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.55;
     }
 
     /* Feature Checkpoints */
@@ -846,72 +839,64 @@
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       padding-top: 6px;
     }
 
     .feature-item {
       display: flex;
       align-items: flex-start;
-      gap: 11px;
-      font-size: 0.91rem;
-      line-height: 1.55;
-      color: #e2e8f0;
-    }
-
-    .feature-item strong {
-      color: #ffffff;
-      font-weight: 700;
+      gap: 10px;
+      font-size: 0.85rem;
+      color: #cbd5e1;
     }
 
     .feature-icon {
       flex-shrink: 0;
-      width: 19px;
-      height: 19px;
+      width: 18px;
+      height: 18px;
       margin-top: 2px;
     }
 
     .card-oncoscan .feature-icon {
-      color: #38bdf8;
+      color: var(--sky-400);
     }
 
     .card-hybrid-qml .feature-icon {
-      color: #c084fc;
+      color: var(--violet-400);
     }
 
     /* Sample Tags Row */
     .sample-pill-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
-      padding: 11px 15px;
-      background: rgba(6, 11, 24, 0.85);
+      gap: 6px;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.25);
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      font-size: 0.80rem;
+      border: 1px solid var(--border-subtle);
+      font-size: 0.76rem;
       align-items: center;
     }
 
     .sample-pill-label {
-      color: #cbd5e1;
-      font-weight: 700;
+      color: var(--text-muted);
+      font-weight: 600;
       font-family: var(--font-mono);
-      font-size: 0.74rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
     }
 
     .cancer-tag {
-      padding: 3px 9px;
-      border-radius: 5px;
-      font-weight: 700;
-      font-size: 0.75rem;
-      letter-spacing: 0.02em;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+      font-size: 0.72rem;
     }
-    .cancer-brca { background: rgba(244, 63, 94, 0.22); color: #fecdd3; border: 1px solid rgba(244, 63, 94, 0.55); }
-    .cancer-luad { background: rgba(249, 115, 22, 0.22); color: #fed7aa; border: 1px solid rgba(249, 115, 22, 0.55); }
-    .cancer-pdac { background: rgba(168, 85, 247, 0.22); color: #f3e8ff; border: 1px solid rgba(168, 85, 247, 0.55); }
-    .cancer-ctrl { background: rgba(16, 185, 129, 0.22); color: #a7f3d0; border: 1px solid rgba(16, 185, 129, 0.55); }
+    .cancer-brca { background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.3); }
+    .cancer-luad { background: rgba(249, 115, 22, 0.15); color: #fdba74; border: 1px solid rgba(249, 115, 22, 0.3); }
+    .cancer-pdac { background: rgba(168, 85, 247, 0.15); color: #d8b4fe; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .cancer-ctrl { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
 
     /* Action Buttons Row */
     .card-actions-row {
@@ -2171,7 +2156,7 @@
             <span class="cancer-tag cancer-pdac">REG1B</span>
             <span class="cancer-tag cancer-pdac">TFF1</span>
             <span class="cancer-tag cancer-ctrl">Creatinine</span>
-            <span class="cancer-tag" style="background: rgba(234, 179, 8, 0.22); color: #fef08a; border: 1px solid rgba(234, 179, 8, 0.55);">CA 19-9 Rescue</span>
+            <span class="cancer-tag" style="background: rgba(234, 179, 8, 0.15); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3);">CA 19-9 Rescue</span>
           </div>
 
           <ul class="feature-list">
